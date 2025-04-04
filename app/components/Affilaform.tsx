@@ -24,6 +24,24 @@ export default function Affilaform() {
         setForm(prev => ({ ...prev, [field]: value }))
     }
 
+    const buttonText = 'Submit'; // Define a default button text or derive it dynamically
+
+    const fields = Object.keys(form).map((key) => ({
+        name: key,
+        value: form[key as keyof typeof form],
+        label: key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        placeholder: `Enter ${key.replace('_', ' ')}`,
+        type: key === 'commission_rate' ? 'number' : key === 'button_color' ? 'color' : 'text',
+        required: key !== 'form_title', // Make all fields required except 'form_title'
+    }));
+
+    const liveConfig = {
+        fields,
+        form_title: form.form_title || 'Default Form Title',
+        button_text: buttonText,
+        button_color: form.button_color,
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
@@ -115,9 +133,7 @@ export default function Affilaform() {
                 <div className='flex justify-center items-center w-full max-w-4xl'>
                     {previewEnabled && (
                         <EmbedPreview
-                            affiliateId="preview-mode"
-                            buttonColor={form.button_color}
-                            formTitle={form.form_title}
+                            liveConfig={liveConfig} // Pass the liveConfig object
                         />
                     )}
                 </div>

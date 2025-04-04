@@ -33,7 +33,7 @@ export default function DynamicForm() {
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        fetch(`https://affiliate-tracking.onrender.com/api/formconfig/${affiliateId}`)
+        fetch(`http://localhost:8080/api/formconfig/${affiliateId}`)
             .then((res) => res.json())
             .then((data) => {
                 const fields: FormField[] = JSON.parse(data.fields)
@@ -58,7 +58,7 @@ export default function DynamicForm() {
         setLoading(true)
 
         try {
-            const res = await fetch('https://affiliate-tracking.onrender.com/api/leads', {
+            const res = await fetch('http://localhost:8080/api/leads', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...formData, affiliate_id: affiliateId }),
