@@ -1,12 +1,10 @@
-'use client'
+import EmbedFormLayout from '@/components/EmbedFormLayout'
+import DynamicForm from '@/components/DynamicForm'
 
-import { Suspense } from 'react'
-import EmbedForm from '../../components/EmbedForm'
-
-export default function EmbedFormWrapper() {
+export default function EmbedFormPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <EmbedForm />
-        </Suspense>
+        <EmbedFormLayout>
+            <DynamicForm />
+        </EmbedFormLayout>
     )
 }
