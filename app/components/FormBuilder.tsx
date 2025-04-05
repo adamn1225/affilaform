@@ -1,6 +1,7 @@
 'use client'
-
+import React, { useState } from 'react'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
+import SignupModal from './ui/SignupModal'
 
 export type FormOption = {
     label: string
@@ -51,6 +52,7 @@ export default function FormBuilder({
     setAffiliateId,
     onSave
 }: FormBuilderProps) {
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     const addField = () => {
         const newFieldName = `field-${fields.length + 1}`;
@@ -93,32 +95,49 @@ export default function FormBuilder({
     }
 
     const saveConfig = async () => {
+        const token = document.cookie
+          .split('; ')
+          .find((row) => row.startsWith('token='))
+          ?.split('=')[1]
+    
+        if (!token) {
+          setIsModalOpen(true) // Open the modal if the user is not logged in
+          return
+        }
+    
         const payload = {
-            affiliate_id: affiliateId,
-            form_title: formTitle,
-            button_text: buttonText,
-            button_color: buttonColor,
-            fields,
+          affiliate_id: affiliateId,
+          form_title: formTitle,
+          button_text: buttonText,
+          button_color: buttonColor,
+          fields,
         }
-
+    
         const res = await fetch('http://localhost:8080/api/formconfig', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`, // Include the token in the request
+          },
+          body: JSON.stringify(payload),
         })
-
+    
         if (res.ok) {
-            alert('Form saved!')
-            const iframe = `<iframe src="http://localhost:8080/embed/form?affiliate=${affiliateId}&button_color=${encodeURIComponent(buttonColor)}&form_title=${encodeURIComponent(formTitle)}" style="width:100%;height:600px;" frameborder="0"></iframe>`
-            onSave?.(iframe)
+          alert('Form saved!')
+          const iframe = `<iframe src="http://localhost:8080/embed/form?affiliate=${affiliateId}&button_color=${encodeURIComponent(
+            buttonColor
+          )}&form_title=${encodeURIComponent(
+            formTitle
+          )}" style="width:100%;height:600px;" frameborder="0"></iframe>`
+          onSave?.(iframe)
         } else {
-            alert('Save failed.')
+          alert('Save failed.')
         }
-    }
+      }
 
     return (
-        <div className="p-6 max-w-3xl mx-auto ">
-            <div className=' space-y-2 h-full overflow-y-auto max-h-[50vh] bg-gray-50 p-3'>
+        <div className="p-6 max-w-3xl">
+            <div className=' space-y-2 h-full overflow-y-auto max-h-[70vh] bg-gray-50 p-3'>
                 <h1 className="text-2xl font-bold">Form Builder</h1>
 
                 <input
@@ -305,10 +324,9 @@ export default function FormBuilder({
             </div>
             <button
                 onClick={saveConfig}
-                className="bg-gray-950 text-white px-4 py-2 rounded hover:bg-gray-800 block w-full"
-            >
+                className="bg-gray-950 text-white px-4 py-2 rounded hover:bg-gray-800 block w-full">
                 Save Form
-            </button>
+             </button>
         </div>
     )
 }
