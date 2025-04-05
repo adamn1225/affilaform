@@ -9,7 +9,7 @@ type Props = {
 export default function EmbedPreview({ liveConfig }: Props) {
     return (
         <div className="mt-6 w-full">
-            <h3 className="text-lg font-semibold mb-2">Live Form Preview</h3>
+            <h3 className="text-xl font-semibold mb-2">Live Form Preview</h3>
             <div className="border border-gray-200 shadow rounded p-4 bg-gray-50">
                 <form className="space-y-4">
                     <h2 className="text-xl font-bold text-center">{liveConfig.form_title}</h2>

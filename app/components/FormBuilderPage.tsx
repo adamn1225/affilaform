@@ -12,13 +12,15 @@ export default function FormBuilderPage() {
   const [buttonColor, setButtonColor] = useState('#000000')
   const [buttonText, setButtonText] = useState('Submit Request')
   const [iframeCode, setIframeCode] = useState<string | null>(null)
-  const [fields, setFields] = useState<FormField[]>([{
-    label: '',
-    name: '',
-    placeholder: '',
-    type: 'text',
-    required: false
-  }])
+  const [fields, setFields] = useState<FormField[]>([
+    {
+      label: '',
+      name: '',
+      placeholder: '',
+      type: 'text',
+      required: false,
+    },
+  ])
 
   const liveConfig = {
     fields,
@@ -43,13 +45,13 @@ export default function FormBuilderPage() {
       }
     }
   }, [])
-  
 
   return (
     <>
-      <div className="w-full py-12">
-
-        <div className="grid grid-cols-2 gap-6 p-6 rounded border-gray-100 shadow">
+      <div className="w-full py-12 md:px-4">
+        {/* Responsive Grid Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded border-gray-100 shadow">
+          {/* Form Builder */}
           <FormBuilder
             fields={fields}
             setFields={setFields}
@@ -64,11 +66,11 @@ export default function FormBuilderPage() {
             onSave={(iframe) => setIframeCode(iframe)}
           />
 
-          <EmbedPreview
-            liveConfig={liveConfig}
-          />
+          {/* Embed Preview */}
+          <EmbedPreview liveConfig={liveConfig} />
         </div>
 
+        {/* Embed Code Modal */}
         <AnimatePresence>
           {iframeCode && (
             <motion.div

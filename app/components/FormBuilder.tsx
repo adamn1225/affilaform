@@ -136,197 +136,205 @@ export default function FormBuilder({
       }
 
     return (
-        <div className="p-6 max-w-3xl">
-            <div className=' space-y-2 h-full overflow-y-auto max-h-[70vh] bg-gray-50 p-3'>
-                <h1 className="text-2xl font-bold">Form Builder</h1>
+<div className="md:p-6 md:max-w-3xl md:mx-auto">
+    <h1 className="text-xl text-center md:text-start md:text-2xl font-bold pb-3">Affiliation Form Builder</h1>
+    <p className="md:hidden tracking-tight text-base pb-3 font-semibold text-justify hyphens-auto">
+  (For the best experience we recommend trying out the demo on desktop)</p>
+  
+  <div className="space-y-2 h-full overflow-y-auto max-h-[70vh] bg-gray-50 md:p-3 rounded">
 
-                <input
-                    value={affiliateId}
-                    onChange={(e) => setAffiliateId(e.target.value)}
-                    placeholder="Affiliate ID"
-                    className="hidden border border-gray-300 p-2 rounded w-full bg-white"
-                />
+    <input
+      value={formTitle}
+      onChange={(e) => setFormTitle(e.target.value)}
+      placeholder="Form Title"
+      className="border border-gray-300 p-2 rounded w-full bg-white"
+    />
 
-                <input
-                    value={formTitle}
-                    onChange={(e) => setFormTitle(e.target.value)}
-                    placeholder="Form Title"
-                    className="border border-gray-300 p-2 rounded w-full bg-white"
-                />
+    <input
+      value={buttonText}
+      onChange={(e) => setButtonText(e.target.value)}
+      placeholder="Button Text"
+      className="border border-gray-300 p-2 rounded w-full bg-white"
+    />
 
-                <input
-                    value={buttonText}
-                    onChange={(e) => setButtonText(e.target.value)}
-                    placeholder="Button Text"
-                    className="border border-gray-300 p-2 rounded w-full bg-white"
-                />
+    <div className="flex items-center gap-2">
+      <label>Button Color</label>
+      <input
+        type="color"
+        value={buttonColor}
+        onChange={(e) => setButtonColor(e.target.value)}
+      />
+    </div>
 
-                <div className="flex items-center gap-2">
-                    <label>Button Color</label>
-                    <input
-                        type="color"
-                        value={buttonColor}
-                        onChange={(e) => setButtonColor(e.target.value)}
-                    />
+    <DragDropContext onDragEnd={onDragEnd}>
+  <Droppable droppableId="fields">
+    {(provided) => (
+      <div
+        ref={provided.innerRef}
+        {...provided.droppableProps}
+        className="space-y-4 overflow-x-auto"
+      >
+        {fields.map((field, index) => (
+          <Draggable key={index} draggableId={`field-${index}`} index={index}>
+            {(provided) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                className="border border-gray-200 shadow p-4 rounded bg-white"
+              >
+                {/* Drag Handle */}
+                <div className="flex justify-between items-center">
+                  <h4 className="font-medium text-gray-700">Field {index + 1}</h4>
+                  <span
+                    {...provided.dragHandleProps}
+                    className="cursor-move text-gray-500 hover:text-gray-700"
+                  >
+                    ☰
+                  </span>
                 </div>
 
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="fields">
-                        {(provided) => (
-                            <div ref={provided.innerRef} {...provided.droppableProps} className="space-y-4">
-                                {fields.map((field, index) => (
-                                    <Draggable key={index} draggableId={`field-${index}`} index={index}>
-                                        {(provided) => (
-                                            <div>
-                                                <div className='border border-gray-200 shadow p-2 rounded'>
-                                                    <div
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                        className='flex flex-col gap-2 '
-                                                    >
-                                                        <div className='flex flex-col gap-1'>
-                                                            <label className="block font-medium">Field Type</label>
-                                                            <select
-                                                                value={field.type}
-                                                                onChange={(e) => updateField(index, { type: e.target.value })}
-                                                                className="border p-2 rounded w-3/4 bg-white"
-                                                            >
-                                                                <option value="text">Text</option>
-                                                                <option value="email">Email</option>
-                                                                <option value="tel">Phone</option>
-                                                                <option value="number">Number</option>
-                                                                <option value="textarea">Textarea</option>
-                                                                <option value="select">Select</option>
-                                                                <option value="radio">Radio</option>
-                                                            </select>
-                                                            {(field.type === 'select' || field.type === 'radio') && (
-                                                                <div className="col-span-6 space-y-2">
-                                                                    <label className="block font-medium">Options</label>
-                                                                    {field.options?.map((opt, i) => (
-                                                                        <div key={i} className="flex gap-2">
-                                                                            <input
-                                                                                placeholder="Option Label"
-                                                                                value={opt.label}
-                                                                                onChange={(e) => {
-                                                                                    const newOptions = [...(field.options || [])]
-                                                                                    newOptions[i] = { ...newOptions[i], label: e.target.value }
-                                                                                    updateField(index, { options: newOptions })
-                                                                                }}
-                                                                                className="border border-gray-300 p-1 rounded w-full bg-white"
-                                                                            />
-                                                                            <input
-                                                                                placeholder="Field Value"
-                                                                                value={opt.value}
-                                                                                onChange={(e) => {
-                                                                                    const newOptions = [...(field.options || [])]
-                                                                                    newOptions[i] = { ...newOptions[i], value: e.target.value }
-                                                                                    updateField(index, { options: newOptions })
-                                                                                }}
-                                                                                className="border border-gray-300 p-1 rounded w-full bg-white"
-                                                                            />
-                                                                            <button
-                                                                                onClick={() => {
-                                                                                    const newOptions = (field.options || []).filter((_, j) => j !== i)
-                                                                                    updateField(index, { options: newOptions })
-                                                                                }}
-                                                                                className="bg-red-500 text-white px-2 py-1 rounded"
-                                                                            >
-                                                                                ✕
-                                                                            </button>
-                                                                        </div>
-                                                                    ))}
-                                                                    <button
-                                                                        onClick={() => updateField(index, {
-                                                                            options: [...(field.options || []), { label: '', value: '' }]
-                                                                        })}
-                                                                        className="bg-blue-500 text-white px-2 py-1 mb-3 rounded"
-                                                                    >
-                                                                        + Add Option
-                                                                    </button>
-                                                                </div>
+                {/* Field Type */}
+                <div className="flex flex-col gap-2 mt-2">
+                  <label className="block font-medium">Field Type</label>
+                  <select
+                    value={field.type}
+                    onChange={(e) => updateField(index, { type: e.target.value })}
+                    className="border p-2 rounded w-full bg-white"
+                  >
+                    <option value="text">Text</option>
+                    <option value="email">Email</option>
+                    <option value="tel">Phone</option>
+                    <option value="number">Number</option>
+                    <option value="textarea">Textarea</option>
+                    <option value="select">Select</option>
+                    <option value="radio">Radio</option>
+                  </select>
+                </div>
 
-                                                            )}
-                                                        </div>
+                {/* Options for Select/Radio */}
+                {(field.type === 'select' || field.type === 'radio') && (
+                  <div className="mt-4">
+                    <label className="block font-medium">Options</label>
+                    {field.options?.map((opt, i) => (
+                      <div key={i} className="flex gap-2 mt-2">
+                        <input
+                          placeholder="Option Label"
+                          value={opt.label}
+                          onChange={(e) => {
+                            const newOptions = [...(field.options || [])]
+                            newOptions[i] = { ...newOptions[i], label: e.target.value }
+                            updateField(index, { options: newOptions })
+                          }}
+                          className="border border-gray-300 p-2 rounded w-full bg-white"
+                        />
+                        <input
+                          placeholder="Option Value"
+                          value={opt.value}
+                          onChange={(e) => {
+                            const newOptions = [...(field.options || [])]
+                            newOptions[i] = { ...newOptions[i], value: e.target.value }
+                            updateField(index, { options: newOptions })
+                          }}
+                          className="border border-gray-300 p-2 rounded w-full bg-white"
+                        />
+                        <button
+                          onClick={() => {
+                            const newOptions = (field.options || []).filter((_, j) => j !== i)
+                            updateField(index, { options: newOptions })
+                          }}
+                          className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      onClick={() =>
+                        updateField(index, {
+                          options: [...(field.options || []), { label: '', value: '' }],
+                        })
+                      }
+                      className="bg-blue-500 text-white px-4 py-2 rounded mt-2 hover:bg-blue-600"
+                    >
+                      + Add Option
+                    </button>
+                  </div>
+                )}
 
+                {/* Field Details */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  <div>
+                    <label className="block font-medium">Field Name</label>
+                    <input
+                      placeholder="Name"
+                      value={field.name}
+                      onChange={(e) => updateField(index, { name: e.target.value })}
+                      className="border border-gray-300 p-2 rounded w-full bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-medium">Field Label</label>
+                    <input
+                      placeholder="Label"
+                      value={field.label}
+                      onChange={(e) => updateField(index, { label: e.target.value })}
+                      className="border border-gray-300 p-2 rounded w-full bg-white"
+                    />
+                  </div>
+                  {!(field.type === 'select' || field.type === 'radio' || field.type === 'textarea') && (
+                    <div>
+                      <label className="block font-medium">Placeholder</label>
+                      <input
+                        placeholder="Placeholder"
+                        value={field.placeholder}
+                        onChange={(e) => updateField(index, { placeholder: e.target.value })}
+                        className="border border-gray-300 p-2 rounded w-full bg-white"
+                      />
+                    </div>
+                  )}
+                </div>
 
-                                                        <div className="grid grid-cols-3 gap-2 items-start">
-                                                            <label className="block font-medium">Field Name
-                                                                <input
-                                                                    placeholder="Name"
-                                                                    value={field.name}
-                                                                    onChange={(e) => updateField(index, { name: e.target.value })}
-                                                                    className="border border-gray-300 p-1 rounded bg-white"
-                                                                /></label>
-                                                            <label className="block font-medium">Field Label
-                                                                <input
-                                                                    placeholder="Label"
-                                                                    value={field.label}
-                                                                    onChange={(e) => updateField(index, { label: e.target.value })}
-                                                                    className="border border-gray-300 p-1 rounded bg-white"
-                                                                /></label>
-
-
-
-                                                            {!(field.type === 'select' || field.type === 'radio' || field.type === 'textarea') && (
-                                                                <label className="block font-medium">Placeholder
-                                                                    <input
-                                                                        placeholder="Placeholder"
-                                                                        value={field.placeholder}
-                                                                        onChange={(e) => updateField(index, { placeholder: e.target.value })}
-                                                                        className="border border-gray-300 p-1 rounded bg-white"
-                                                                    /></label>
-                                                            )}
-                                                        </div>
-
-                                                    </div>
-
-
-
-                                                    <div className='flex items-center gap-2 mt-2'>
-                                                        <label className="flex items-center gap-1">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={field.required}
-                                                                onChange={(e) => updateField(index, { required: e.target.checked })}
-                                                            />
-                                                            Required?
-                                                        </label>
-
-                                                        <button
-                                                            onClick={() => setFields(prev => prev.filter((_, i) => i !== index))}
-                                                            className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                                                        >
-                                                            Remove
-                                                        </button>
-                                                    </div>
-                                                </div>
-
-
-                                            </div>
-                                        )}
-                                    </Draggable>
-                                ))}
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
-                </DragDropContext>
+                {/* Required Checkbox and Remove Button */}
+                <div className="flex items-center gap-4 mt-4">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={field.required}
+                      onChange={(e) => updateField(index, { required: e.target.checked })}
+                    />
+                    Required?
+                  </label>
+                  <button
+                    onClick={() => setFields((prev) => prev.filter((_, i) => i !== index))}
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            )}
+          </Draggable>
+        ))}
+        {provided.placeholder}
+      </div>
+    )}
+  </Droppable>
+</DragDropContext>
 
                 <button
-                    onClick={addField}
-                    className="bg-gray-950 text-white px-4 py-2 rounded hover:bg-gray-800"
-                >
-                    + Add Field
+                  onClick={addField}
+                  className="bg-gray-950 text-white px-4 py-2 rounded hover:bg-gray-800 w-full">
+                  + Add Field
                 </button>
-
-
             </div>
-            <button
-                onClick={saveConfig}
-                className="bg-gray-950 text-white px-4 py-2 rounded hover:bg-gray-800 block w-full">
-                Save Form
-             </button>
+
+                 <button
+                   onClick={saveConfig}
+                   className="bg-gray-950 text-white px-4 py-2 rounded hover:bg-gray-800 block w-full mt-4"
+                 >
+                   Save Form
+                 </button>
         </div>
     )
 }
