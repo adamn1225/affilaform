@@ -15,21 +15,30 @@ export default function LoginForm({ role }: LoginFormProps) {
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
+  e.preventDefault()
+  setError('')
 
-    try {
-        const data = await login({ email, password })
-        
-        // cookie for middleware-based auth
-        const isProd = process.env.NODE_ENV === 'production'
-        document.cookie = `token=${data.token}; path=/; samesite=lax${isProd ? '; secure' : ''}`
-              
-        router.push(`/${data.user.role}/dashboard`)
-      } catch (err: any) {
-        setError(err.message)
-      }
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+
+    if (!res.ok) {
+      const err = await res.json()
+      throw new Error(err.error || 'Login failed')
+    }
+
+    const { user } = await res.json()
+
+    // Redirect based on role
+    router.push(`/${user.role}/dashboard`)
+  } catch (err: any) {
+    setError(err.message)
   }
+}
+
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto mt-10">

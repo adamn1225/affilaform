@@ -25,13 +25,20 @@ export async function middleware(req: NextRequest) {
 
   for (const route of protectedRoutes) {
     if (route.path.test(url.pathname)) {
+      console.log("🌐 Route matched:", url.pathname)
+      console.log("🍪 Cookie token:", token)
+
       if (!token) {
-        url.pathname = '/login' // or send them to the role-specific login page
+        console.log("🚫 No token found")
+        url.pathname = '/login'
         return NextResponse.redirect(url)
       }
 
       const decoded = await verifyToken(token)
+      console.log("🔍 Decoded payload:", decoded)
+
       if (!decoded || (route.role && decoded.role !== route.role)) {
+        console.log("⛔ Unauthorized: Role mismatch or decode failed")
         url.pathname = '/unauthorized'
         return NextResponse.redirect(url)
       }

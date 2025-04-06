@@ -1,7 +1,7 @@
 import { apiFetch } from './apiFetch'
 
 export async function getFormConfigs(): Promise<FormConfig[]> {
-  return apiFetch('/api/formconfigs', {
+  return apiFetch('http://localhost:8080/api/affiliate-form/:slug', {
     method: 'GET',
   })
 }

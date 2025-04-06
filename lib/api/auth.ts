@@ -7,8 +7,6 @@ export async function login({ email, password }: { email: string, password: stri
   })
 }
 
-type Role = 'vendor' | 'affiliate'
-
 export async function signup({
   email,
   password,
@@ -18,9 +16,9 @@ export async function signup({
   email: string
   password: string
   company_name: string
-  role: Role
+  role: 'vendor' | 'affiliate'
 }) {
-  return apiFetch('/api/' + role + '/signup', {
+  return apiFetch(`/api/${role}/signup`, {
     method: 'POST',
     body: JSON.stringify({ email, password, company_name }),
   })

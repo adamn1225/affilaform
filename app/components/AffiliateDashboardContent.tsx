@@ -25,37 +25,38 @@ export default function AffiliateDashboardContent() {
 
     useEffect(() => {
         async function fetchData() {
-            const baseUrl =
-                process.env.NODE_ENV === 'development'
-                    ? process.env.NEXT_PUBLIC_API_LOCAL
-                    : process.env.NEXT_PUBLIC_API_URL;
-
+          try {
+            const baseUrl = process.env.NEXT_PUBLIC_API_LOCAL;
+      
             const [affiliatesRes, leadsRes] = await Promise.all([
-                fetch(`${baseUrl}/api/affiliates`, {
-                    headers: {
-                        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}`
-                    }
-                }),
-                fetch(`${baseUrl}/api/leads`, {
-                    headers: {
-                        Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}`
-                    }
-                }),
-
+              fetch(`${baseUrl}/api/affiliates`, {
+                headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}` },
+              }),
+              fetch(`${baseUrl}/api/vendor/leads`, {
+                headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}` },
+              }),
             ]);
-
+      
+            if (!affiliatesRes.ok || !leadsRes.ok) {
+              throw new Error('Failed to fetch data from one or more endpoints');
+            }
+      
             const [affiliatesData, leadsData] = await Promise.all([
-                affiliatesRes.json(),
-                leadsRes.json(),
+              affiliatesRes.json(),
+              leadsRes.json(),
             ]);
-
+      
             setAffiliates(affiliatesData);
             setLeads(leadsData);
-            setLoading(false)
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          } finally {
+            setLoading(false);
+          }
         }
-
-        fetchData()
-    }, [])
+      
+        fetchData();
+      }, []);
 
     const getLeadCount = (affiliateId: string) =>
         leads.filter((l) => l.affiliate_id === affiliateId).length

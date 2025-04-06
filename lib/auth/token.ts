@@ -1,7 +1,9 @@
 export function getToken(): string | null {
-    if (typeof window === 'undefined') return null
-    return localStorage.getItem('token')
-  }
+  if (typeof document === 'undefined') return null
+
+  const match = document.cookie.match(/(^|;) ?token=([^;]*)(;|$)/)
+  return match ? match[2] : null
+}
   
   export function decodeToken(token: string): {
       email: string | undefined; exp: number; role: string; user_id: string 

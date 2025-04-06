@@ -1,12 +1,41 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import FormBuilderPage from './FormBuilderPage'
 import VendorForms from './VendorForms'
 import VendorSubmissions from './VendorSubmissions'
 
 export default function VendorDashboard() {
   const [tab, setTab] = useState<'forms' | 'submissions' | 'builder'>('forms')
+  const [vendor, setVendor] = useState<{ email: string; company_name: string } | null>(null)
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('token='))
+        ?.split('=')[1]
+  
+      if (!token) return // or redirect to login
+  
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_LOCAL}/api/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+  
+      if (!res.ok) {
+        console.error('Failed to fetch vendor profile')
+        return
+      }
+  
+      const data = await res.json()
+      setVendor(data)
+    }
+  
+    fetchProfile()
+  }, [])
+  
 
   return (
     <div className="max-w-6xl mx-auto mt-10 p-4 space-y-4">
@@ -32,6 +61,16 @@ export default function VendorDashboard() {
             + New Form
           </button>
         </div>
+        <button
+  onClick={() => {
+    localStorage.removeItem('token')
+    document.cookie = `token=; path=/; max-age=0`
+    window.location.href = '/login'
+  }}
+  className="text-sm text-red-500"
+>
+  Logout
+</button>
       </div>
 
       <div className="border rounded-xl p-4 bg-white">
