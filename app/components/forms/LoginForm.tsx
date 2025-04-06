@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { login } from '@/lib/api/auth'
 
 interface LoginFormProps {
   role: 'vendor' | 'affiliate'
@@ -15,29 +14,28 @@ export default function LoginForm({ role }: LoginFormProps) {
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
-  setError('')
+    e.preventDefault()
+    setError('')
 
-  try {
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    })
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include',
+      })
 
-    if (!res.ok) {
-      const err = await res.json()
-      throw new Error(err.error || 'Login failed')
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Login failed')
+      }
+
+      const { user } = await res.json()
+      window.location.href = `/${user.role}/dashboard`
+    } catch (err: any) {
+      setError(err.message)
     }
-
-    const { user } = await res.json()
-
-    // Redirect based on role
-    router.push(`/${user.role}/dashboard`)
-  } catch (err: any) {
-    setError(err.message)
   }
-}
 
 
   return (

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getFormConfigs, FormConfig } from '@/lib/api/forms'
+import { getMyForms, FormConfig } from '@/lib/api/forms'
 import toast from 'react-hot-toast'
 
 export default function VendorForms() {
@@ -9,10 +9,21 @@ export default function VendorForms() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getFormConfigs()
-      .then(setForms)
-      .finally(() => setLoading(false))
-  }, [])
+    async function fetchForms() {
+      try {
+        const forms = await getMyForms();
+        console.log('Fetched forms:', forms); // Debugging
+        setForms(forms);
+      } catch (err) {
+        console.error('Error fetching forms:', err);
+        toast.error('Failed to fetch forms');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchForms();
+  }, []);
 
   if (loading) return <p>Loading forms...</p>
 
@@ -24,9 +35,9 @@ export default function VendorForms() {
         <p className="text-gray-500">No forms created yet.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {forms.map((form) => (
+          {forms.map((form, index) => (
             <div
-              key={form.id}
+              key={form.id || `form-${index}`} // Fallback to index if form.id is undefined
               className="border p-4 rounded-lg shadow-sm bg-white flex flex-col justify-between"
             >
               <div>
@@ -39,7 +50,7 @@ export default function VendorForms() {
               <div className="flex gap-2 mt-4">
                 <button
                   className="text-sm px-3 py-1 bg-gray-100 rounded hover:bg-gray-200"
-                  
+
                   onClick={() => {
                     navigator.clipboard.writeText(
                       `<iframe src="${process.env.NEXT_PUBLIC_BASE_URL}/form/${form.id}" style="width:100%;height:500px;border:none;"></iframe>`

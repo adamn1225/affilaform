@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "../globals.css";
 import TopNavigation from '@/components/sections/TopNavigation';
 import Footer from '@/components/sections/Footer';
 

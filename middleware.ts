@@ -3,7 +3,7 @@ import { jwtVerify } from 'jose'
 
 // Helper: verify token with secret
 async function verifyToken(token: string) {
-  const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+  const secret = new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET)
   try {
     const { payload } = await jwtVerify(token, secret)
     return payload
@@ -11,6 +11,7 @@ async function verifyToken(token: string) {
     return null
   }
 }
+console.log(" Middleware secret loaded:", process.env.NEXT_PUBLIC_JWT_SECRET)
 
 // Define protected routes and their required roles
 const protectedRoutes: { path: RegExp; role?: string }[] = [
@@ -25,20 +26,20 @@ export async function middleware(req: NextRequest) {
 
   for (const route of protectedRoutes) {
     if (route.path.test(url.pathname)) {
-      console.log("🌐 Route matched:", url.pathname)
-      console.log("🍪 Cookie token:", token)
+      console.log(" Route matched:", url.pathname)
+      console.log(" Cookie token:", token)
 
       if (!token) {
-        console.log("🚫 No token found")
+        console.log(" No token found")
         url.pathname = '/login'
         return NextResponse.redirect(url)
       }
 
       const decoded = await verifyToken(token)
-      console.log("🔍 Decoded payload:", decoded)
+      console.log(" Decoded payload:", decoded)
 
       if (!decoded || (route.role && decoded.role !== route.role)) {
-        console.log("⛔ Unauthorized: Role mismatch or decode failed")
+        console.log(" Unauthorized: Role mismatch or decode failed")
         url.pathname = '/unauthorized'
         return NextResponse.redirect(url)
       }

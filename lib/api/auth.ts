@@ -18,11 +18,20 @@ export async function signup({
   company_name: string
   role: 'vendor' | 'affiliate'
 }) {
-  return apiFetch(`/api/${role}/signup`, {
+  const res = await fetch(`/api/${role}/signup`, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password, company_name }),
   })
+
+  if (!res.ok) {
+    const err = await res.json()
+    throw new Error(err.error || 'Signup failed')
+  }
+
+  return res.json()
 }
+
 
 
 

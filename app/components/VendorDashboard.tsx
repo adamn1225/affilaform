@@ -4,43 +4,39 @@ import { useEffect, useState } from 'react'
 import FormBuilderPage from './FormBuilderPage'
 import VendorForms from './VendorForms'
 import VendorSubmissions from './VendorSubmissions'
+import LogoutButton from '@/components/ui/LogoutButton'
 
 export default function VendorDashboard() {
   const [tab, setTab] = useState<'forms' | 'submissions' | 'builder'>('forms')
-  const [vendor, setVendor] = useState<{ email: string; company_name: string } | null>(null)
+  const [vendor, setVendor] = useState<{ email: string; company_name: string, role: string } | null>(null)
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('token='))
-        ?.split('=')[1]
-  
-      if (!token) return // or redirect to login
-  
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_LOCAL}/api/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        method: 'GET',
+        credentials: 'include',
       })
-  
+
       if (!res.ok) {
         console.error('Failed to fetch vendor profile')
         return
       }
-  
+
       const data = await res.json()
       setVendor(data)
     }
-  
+
     fetchProfile()
-  }, [])
-  
+  }, [vendor])
 
   return (
-    <div className="max-w-6xl mx-auto mt-10 p-4 space-y-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Vendor Dashboard</h1>
+    <div className="flex flex-col items-center w-full mt-10 space-y-4">
+      <div className='flex flex-col items-start w-full px-4'>
+        <h1 className="text-2xl font-bold">Vendor Dashboard for {vendor?.company_name} </h1>
+        <p className="text-sm text-gray-500">Logged in as {vendor?.email} </p>
+        <p className="text-sm text-gray-500">Account Type: {vendor?.role} </p>
+      </div>
+      <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2">
           <button
             onClick={() => setTab('forms')}
@@ -61,16 +57,6 @@ export default function VendorDashboard() {
             + New Form
           </button>
         </div>
-        <button
-  onClick={() => {
-    localStorage.removeItem('token')
-    document.cookie = `token=; path=/; max-age=0`
-    window.location.href = '/login'
-  }}
-  className="text-sm text-red-500"
->
-  Logout
-</button>
       </div>
 
       <div className="border rounded-xl p-4 bg-white">

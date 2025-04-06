@@ -1,8 +1,8 @@
-// app/api/login/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
+
   const res = await fetch('http://localhost:8080/api/vendor/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   const { token, user } = await res.json()
 
-  const response = NextResponse.json({ user })
+  const response = NextResponse.json({ user, token })
 
   response.cookies.set('token', token, {
     path: '/',
