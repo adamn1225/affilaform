@@ -28,7 +28,7 @@ export async function saveFormConfig(config: FormConfig) {
 }
 
 export type FormConfig = {
-  id: string
+  id: number
   form_title: string
   button_text: string
   button_color: string

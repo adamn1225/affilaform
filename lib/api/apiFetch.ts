@@ -1,8 +1,18 @@
+import { generateServerToken } from './jsonwebtoken';
+
 export async function apiFetch(url: string, options: RequestInit = {}) {
-  const token = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith('token='))
-    ?.split('=')[1];
+  let token: string | undefined;
+
+  // Check if running on the client
+  if (typeof window !== 'undefined') {
+    token = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('token='))
+      ?.split('=')[1];
+  } else {
+    // Generate a server-side token for server-side requests
+    token = generateServerToken();
+  }
 
   const headers = {
     ...options.headers,
@@ -19,13 +29,14 @@ export async function apiFetch(url: string, options: RequestInit = {}) {
     headers,
   });
 
-  let data;
   const contentType = res.headers.get('content-type') || '';
+  let data;
 
   if (contentType.includes('application/json')) {
     try {
       data = await res.json();
     } catch {
+      console.error('[apiFetch] Invalid JSON in response');
       throw new Error('Invalid JSON in response');
     }
   } else {
@@ -38,11 +49,6 @@ export async function apiFetch(url: string, options: RequestInit = {}) {
     throw new Error(data?.error || `API request failed with status ${res.status}`);
   }
 
-  if (!contentType.includes('application/json')) {
-    console.warn(`[apiFetch] Unexpected content-type: ${contentType}`);
-    const text = await res.text();
-    console.warn(`[apiFetch] Response text: ${text}`);
-  }
-
+  console.log(`[apiFetch] Response data:`, data);
   return data;
 }
