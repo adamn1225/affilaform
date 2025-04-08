@@ -101,7 +101,7 @@ export default function FormBuilder({
       button_text: buttonText,
       button_color: buttonColor,
       fields,
-    }
+    };
 
     try {
       const res = await fetch('http://localhost:8080/api/formconfig', {
@@ -111,29 +111,31 @@ export default function FormBuilder({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
-      })
+      });
 
       if (res.status === 401) {
-        setIsModalOpen(true)
-        return
+        setIsModalOpen(true);
+        return;
       }
 
       if (!res.ok) {
-        throw new Error('Failed to save form config')
+        throw new Error('Failed to save form config');
       }
 
-      alert('Form saved!')
+      const savedForm = await res.json(); // Get the saved form with the generated ID
+      alert('Form saved!');
+
       const iframe = `<iframe src="http://localhost:8080/embed/form?affiliate=${affiliateId}&button_color=${encodeURIComponent(
         buttonColor
       )}&form_title=${encodeURIComponent(
         formTitle
-      )}" style="width:100%;height:600px;" frameborder="0"></iframe>`
-      onSave?.(iframe)
+      )}" style="width:100%;height:600px;" frameborder="0"></iframe>`;
+      onSave?.(iframe);
     } catch (err) {
-      console.error('Save error:', err)
-      alert('Save failed.')
+      console.error('Save error:', err);
+      alert('Save failed.');
     }
-  }
+  };
 
 
   return (

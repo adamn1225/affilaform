@@ -12,7 +12,7 @@ export default function VendorForms() {
     async function fetchForms() {
       try {
         const forms = await getMyForms();
-        console.log('Fetched forms:', forms); // Debugging
+        console.log('Fetched forms:', forms); // Log the entire forms array
         setForms(forms);
       } catch (err) {
         console.error('Error fetching forms:', err);
@@ -69,7 +69,7 @@ export default function VendorForms() {
                 </a>
                 <button
                   onClick={() => {
-                    localStorage.setItem('formConfigDraft', JSON.stringify(form))
+                    localStorage.setItem('formConfigDraft', JSON.stringify(form));
                     window.location.href = '/vendor/dashboard?tab=builder'
                   }}
                   className="text-sm px-3 py-1 bg-blue-100 text-blue-800 rounded hover:bg-blue-200"

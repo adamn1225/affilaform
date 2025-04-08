@@ -14,7 +14,7 @@ export default function CallToActions() {
         <div className="mt-6 flex justify-center space-x-4">
           <Link
             href="/signup"
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded text-base"
+            className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded text-base"
           >
             Sign Up Now
           </Link>

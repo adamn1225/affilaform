@@ -35,7 +35,7 @@ export default function TopNavigation() {
             </Link>
             <Link
               href="/login"
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 rounded"
             >
               Login
             </Link>
@@ -49,30 +49,30 @@ export default function TopNavigation() {
             Menu
           </button>
           <Link href="/" className="text-xl pl-12 font-bold md:hidden">
-              <Image src={logo} alt="Logo" width={175} height={0} className="inline-block mr-2" />
-        </Link>
+            <Image src={logo} alt="Logo" width={175} height={0} className="inline-block mr-2" />
+          </Link>
         </div>
 
         {/* Mobile Links */}
         {menuOpen && (
           <div className="bg-gray-800 absolute top-16.1 left-0 w-2/3 md:hidden">
-              <div className="tracking-widest flex flex-col items-start text-base font-semibold pl-6 space-y-2 mt-2 ml-auto h-screen md:hidden">
-                <Link href="#features" className="hover:text-gray-300 underline underline-offset-4">
-                  Affiliates
-                </Link>
-                <Link href="#pricing" className="hover:text-gray-300 underline underline-offset-4">
-                  Documentation
-                </Link>
-                <Link href="#contact" className="hover:text-gray-300 underline underline-offset-4">
-                  Support
-                </Link>
-                <Link
-                  href="/login"
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-                >
-                  Login
-                </Link>
-              </div>
+            <div className="tracking-widest flex flex-col items-start text-base font-semibold pl-6 space-y-2 mt-2 ml-auto h-screen md:hidden">
+              <Link href="#features" className="hover:text-gray-300 underline underline-offset-4">
+                Affiliates
+              </Link>
+              <Link href="#pricing" className="hover:text-gray-300 underline underline-offset-4">
+                Documentation
+              </Link>
+              <Link href="#contact" className="hover:text-gray-300 underline underline-offset-4">
+                Support
+              </Link>
+              <Link
+                href="/login"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+              >
+                Login
+              </Link>
+            </div>
           </div>
         )}
       </div>

@@ -15,7 +15,7 @@ export default function VendorSubmissions() {
         if (!forms.length) return setLoading(false)
 
         const formId = forms[0].id // just pick the first form for now
-        const leads = await getLeadsByForm(formId)
+        const leads = await getLeadsByForm(formId.toString())
         setLeads(leads)
       } catch (err) {
         console.error('Failed to fetch leads:', err)
