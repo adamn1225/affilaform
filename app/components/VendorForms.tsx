@@ -28,17 +28,17 @@ export default function VendorForms() {
   if (loading) return <p>Loading forms...</p>
 
   return (
-    <div>
+    <div className='flex flex-col items-center w-full'>
       <h2 className="text-xl font-semibold mb-4">Your Saved Forms</h2>
 
       {forms.length === 0 ? (
         <p className="text-gray-500">No forms created yet.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-6xl">
           {forms.map((form, index) => (
             <div
               key={form.id || `form-${index}`} // Fallback to index if form.id is undefined
-              className="border p-4 rounded-lg shadow-sm bg-white flex flex-col justify-between"
+              className="border p-4 w-full rounded-lg shadow-sm bg-white flex flex-col justify-between"
             >
               <div>
                 <h3 className="font-bold text-lg">{form.form_title}</h3>

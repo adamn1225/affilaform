@@ -1,19 +1,15 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { LogOut } from 'lucide-react'
 
 export default function LogoutButton() {
   const router = useRouter()
 
   const handleLogout = async () => {
     try {
-      // Hit your API to clear cookie server-side
       await fetch('/api/logout', { method: 'POST' })
-
-      // Optional: clear anything from localStorage just in case
       localStorage.removeItem('token')
-
-      // Redirect
       router.push('/login')
     } catch (err) {
       console.error('Logout failed:', err)
@@ -23,8 +19,9 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="text-sm text-red-500 border border-gray-300 shadow py-2 px-2 hover:underline"
+      className="flex items-center gap-2 bg-zinc-500 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors shadow-md"
     >
+      <LogOut size={18} />
       Logout
     </button>
   )

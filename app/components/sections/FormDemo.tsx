@@ -9,8 +9,8 @@ export default function FormDemo() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center py-16 w-full bg-white">
-      <div className="bg-gray-50 md:min-w-3xl rounded-lg shadow-md p-6 max-w-md text-center">
+    <div className="flex flex-col justify-center items-center py-16 w-full bg-gray-50">
+      <div className="bg-white md:min-w-3xl rounded-lg shadow-md p-6 max-w-md text-center">
         <h2 className="text-2xl font-bold mb-4">Form Demo</h2>
         <p className="mb-6 text-base text-zinc-950">
           Click the button below to preview the affiliation form builder in action. No sign-up required!

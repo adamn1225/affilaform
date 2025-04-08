@@ -4,37 +4,35 @@ import { useEffect, useState } from 'react'
 import FormBuilderPage from './FormBuilderPage'
 import VendorForms from './VendorForms'
 import VendorSubmissions from './VendorSubmissions'
-import LogoutButton from '@/components/ui/LogoutButton'
+import { apiFetch } from '@/lib/api/apiFetch'
 
 export default function VendorDashboard() {
   const [tab, setTab] = useState<'forms' | 'submissions' | 'builder'>('forms')
   const [vendor, setVendor] = useState<{ email: string; company_name: string, role: string } | null>(null)
 
   useEffect(() => {
+    console.log('[VendorDashboard] Fetching vendor profile')
     const fetchProfile = async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_LOCAL}/api/me`, {
-        method: 'GET',
-        credentials: 'include',
-      })
-
-      if (!res.ok) {
-        console.error('Failed to fetch vendor profile')
-        return
-      }
-
-      const data = await res.json()
-      setVendor(data)
+      const res = await apiFetch('/api/me')
+      setVendor(res)
     }
-
     fetchProfile()
-  }, [vendor])
+  }, [])
+
+  if (!vendor) {
+    return (
+      <div className="p-10 text-center text-gray-600">
+        <p>Loading your dashboard...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col items-center w-full mt-10 space-y-4">
       <div className='flex flex-col items-start w-full px-4'>
-        <h1 className="text-2xl font-bold">Vendor Dashboard for {vendor?.company_name} </h1>
-        <p className="text-sm text-gray-500">Logged in as {vendor?.email} </p>
-        <p className="text-sm text-gray-500">Account Type: {vendor?.role} </p>
+        <h1 className="text-2xl font-bold">Vendor Dashboard for {vendor.company_name}</h1>
+        <p className="text-sm text-gray-500">Logged in as {vendor.email}</p>
+        <p className="text-sm text-gray-500">Account Type: {vendor.role}</p>
       </div>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2">
@@ -59,7 +57,7 @@ export default function VendorDashboard() {
         </div>
       </div>
 
-      <div className="border rounded-xl p-4 bg-white">
+      <div className="w-full max-w-8xl  p-4 bg-white">
         {tab === 'forms' && <VendorForms />}
         {tab === 'submissions' && <VendorSubmissions />}
         {tab === 'builder' && <FormBuilderPage />}

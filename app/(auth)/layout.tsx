@@ -1,19 +1,23 @@
 import { AuthProvider } from '@/context/UserContext'
 import { Toaster } from 'react-hot-toast'
 import '../globals.css'
-import VendorTopNav from '@/components/VendorTopNav'
+import VendorSideNav from '@/components/VendorSideNav'
+import { TabProvider } from '@/context/TabContext'
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default function VendorLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className='flex flex-col bg-gray-50 min-w-screen min-h-screen'>
-        <AuthProvider>
-          <VendorTopNav />
-          <Toaster position="top-right" />
-          <div className='flex-grow'>
-            {children}
-          </div>
-        </AuthProvider>
+      <body className='flex bg-gray-50 min-w-screen min-h-screen'>
+        <TabProvider>
+          <AuthProvider>
+            <VendorSideNav />
+            <Toaster position="top-right" />
+            <div className='flex-1 md:ml-64 p-6'>
+              {children}
+            </div>
+          </AuthProvider>
+        </ TabProvider>
+
       </body>
     </html>
   )
