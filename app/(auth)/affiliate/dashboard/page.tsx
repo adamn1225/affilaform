@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense } from 'react'
-import AffiliateDashboardContent from '../../components/AffiliateDashboardContent'
+import AffiliateDashboardContent from '@/components/AffiliateDashboardContent'
 
 export default function AffiliateDashboard() {
     return (

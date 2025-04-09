@@ -1,21 +1,23 @@
 import { apiFetch } from './apiFetch'
 
 export async function getMyForms(): Promise<FormConfig[]> {
-  return apiFetch('/api/vendor/formconfigs', {
-    method: 'GET',
-    credentials: 'include',
-  })
+  try {
+    const response = await apiFetch('/api/vendor/formconfigs')
+
+    if (!response || !Array.isArray(response)) {
+      console.error('[getMyForms] Invalid response:', response)
+      return []
+    }
+
+    return response
+  } catch (error) {
+    console.error('[getMyForms] Failed to fetch forms:', error)
+    return []
+  }
 }
 
 export async function saveFormConfig(config: FormConfig) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_LOCAL}/api/formconfig`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(config),
-  })
+  const res = await apiFetch(`/api/formconfig`)
 
   if (!res.ok) {
     if (res.status === 401) {
