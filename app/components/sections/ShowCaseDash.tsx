@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import VendorDash from '@/public/vendor-dashboard.png';
+import FormBuilderImage from '@/public/Affil-Form-Builder.png';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation'
 
@@ -37,11 +37,11 @@ export default function ShowCaseDash() {
 
             <div className="flex justify-center items-start h-full px-12 -mt-12">
                 <Image
-                    src={VendorDash}
+                    src={FormBuilderImage}
                     alt="Vendor Dashboard"
-                    className="w-full max-w-2xl rounded-lg shadow-lg"
-                    width={500}
-                    height={300}
+                    className="w-full max-w-xl rounded-lg shadow-lg"
+                    width={0}
+                    height={0}
                 />
             </div>
 

@@ -1,7 +1,7 @@
 'use client'
 import { createContext, useContext, useState } from 'react'
 
-type Tab = 'forms' | 'submissions' | 'builder'
+type Tab = 'submissions' | 'forms' | 'builder' | 'vendorsettings'
 
 const TabContext = createContext<{
     tab: Tab

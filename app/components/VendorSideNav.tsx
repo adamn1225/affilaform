@@ -5,16 +5,20 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import logo from '@/public/logo.png';
 import LogoutButton from '@/components/ui/LogoutButton';
-import { Users, BookOpen, LifeBuoy, LogOut, LayoutDashboard, ChevronDown, ChevronRight } from 'lucide-react';
-import { useTab } from '@/context/TabContext';
+import { Users, BookOpen, LifeBuoy, UserCog, LayoutDashboard, ChevronDown, ChevronRight, Wallet, CreditCard } from 'lucide-react';
+
 
 export default function VendorSideNav() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [dashboardOpen, setDashboardOpen] = useState(true);
+    const [dashboardOpen, setDashboardOpen] = useState(false);
     const pathname = usePathname();
-    const { setTab } = useTab();
 
     const navItems = [
+        {
+            label: 'Wallet Settings',
+            href: '/vendor/wallet-settings',
+            icon: <CreditCard size={20} />,
+        },
         {
             label: 'Affiliates',
             href: '/vendor/affiliates',
@@ -22,7 +26,7 @@ export default function VendorSideNav() {
         },
         {
             label: 'Documentation',
-            href: '/vendor/docs',
+            href: '/vendor/documentation',
             icon: <BookOpen size={20} />,
         },
         {
@@ -58,41 +62,43 @@ export default function VendorSideNav() {
                     {/* Nav Links */}
                     <nav className="flex-1 p-6 space-y-2 text-sm font-medium">
                         {/* Dashboard Collapsible */}
-                        <div>
-                            <div
-                                onClick={() => setDashboardOpen(!dashboardOpen)}
-                                className="flex items-center justify-between px-5 py-2 rounded-md hover:bg-gray-800 transition-colors cursor-pointer"
-                            >
-                                <span className="flex items-center gap-2">
-                                    <LayoutDashboard size={20} />
-                                    Dashboard
-                                </span>
-                                {dashboardOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                            </div>
 
-                            {dashboardOpen && (
-                                <div className="ml-12 mt-2 flex flex-col gap-2 text-sm text-gray-400">
-                                    <button
-                                        onClick={() => setTab('submissions')}
-                                        className="hover:text-white transition-colors text-left"
-                                    >
-                                        Submissions
-                                    </button>
-                                    <button
-                                        onClick={() => setTab('forms')}
-                                        className="hover:text-white transition-colors text-left"
-                                    >
-                                        Your Forms
-                                    </button>
-                                    <button
-                                        onClick={() => setTab('builder')}
-                                        className="hover:text-white transition-colors text-left"
-                                    >
-                                        New Form
-                                    </button>
-                                </div>
-                            )}
+                        <div
+                            onClick={() => setDashboardOpen(!dashboardOpen)}
+                            className="flex items-center justify-between px-5 py-2 rounded-md hover:bg-gray-800 transition-colors cursor-pointer"
+                        >
+                            <span className="flex items-center gap-2">
+                                <LayoutDashboard size={20} />
+                                Dashboard
+                            </span>
+                            {dashboardOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                         </div>
+
+                        {dashboardOpen && (
+                            <div className="ml-12 mt-2 flex flex-col gap-2 text-sm text-gray-400">
+                                <Link
+                                    href="/vendor/your-forms"
+                                    className={`hover:text-white transition-colors text-left ${pathname === '/vendor/your-forms' ? 'text-white font-bold' : ''
+                                        }`}
+                                >
+                                    Your Forms
+                                </Link>
+                                <Link
+                                    href="/vendor/form-submissions"
+                                    className={`hover:text-white transition-colors text-left ${pathname === '/vendor/form-submissions' ? 'text-white font-bold' : ''
+                                        }`}
+                                >
+                                    Form Submissions
+                                </Link>
+                                <Link
+                                    href="/vendor/aff-form-builder"
+                                    className={`hover:text-white transition-colors text-left ${pathname === '/vendor/aff-form-builder' ? 'text-white font-bold' : ''
+                                        }`}
+                                >
+                                    New Form
+                                </Link>
+                            </div>
+                        )}
 
                         {/* Static Links */}
                         {navItems.map((item) => {
@@ -114,7 +120,17 @@ export default function VendorSideNav() {
                     </nav>
 
                     {/* Logout */}
-                    <div className="p-6 border-t border-gray-800">
+                    <div className="p-6 flex flex-col gap-2 border-t border-gray-800">
+                        <Link
+                            href="/vendor/your-settings"
+                            className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${pathname === '/vendor/your-settings'
+                                ? 'bg-gray-800 text-white font-bold border-l-4 border-blue-500'
+                                : 'text-gray-300 font-bold hover:text-white hover:bg-gray-800'
+                                }`}
+                        >
+                            <UserCog size={20} />
+                            Settings
+                        </Link>
                         <LogoutButton />
                     </div>
                 </div>
