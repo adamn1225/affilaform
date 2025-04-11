@@ -45,7 +45,7 @@ export default function RotatorDocsPage() {
             </section>
 
             <section className="space-y-4 mb-10">
-                <h2 className="text-xl font-semibold">🚀 Coming Soon</h2>
+                <h2 className="text-xl font-semibold">Coming Soon</h2>
                 <ul className="list-disc pl-6 text-gray-700 space-y-2">
                     <li> Detailed analytics and click heatmaps</li>
                     <li> Smart rules (e.g., country/device-based targeting)</li>

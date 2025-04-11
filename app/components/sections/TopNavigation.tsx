@@ -28,14 +28,8 @@ export default function TopNavigation() {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center space-x-4 text-white font-semibold text-lg">
-            <Link href="#features" className="hover:text-gray-300 underline underline-offset-4">
-              Affiliates
-            </Link>
-            <Link href="#pricing" className="hover:text-gray-300 underline underline-offset-4">
-              Documentation
-            </Link>
-            <Link href="#contact" className="hover:text-gray-300 underline underline-offset-4">
-              Support
+            <Link href="/vendors" className="hover:text-gray-300 underline underline-offset-4">
+              Listings
             </Link>
             <div className="relative">
               <button

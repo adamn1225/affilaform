@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "../globals.css";
 import TopNavigation from '@/components/sections/TopNavigation';
 import Footer from '@/components/sections/Footer';
+import { AuthProvider } from '@/context/UserContext';
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,7 +19,9 @@ export default function RootLayout({
       <body className="flex flex-col bg-gray-50">
         <TopNavigation />
         <div className="flex-grow">
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
 
         </div>
         <Footer />

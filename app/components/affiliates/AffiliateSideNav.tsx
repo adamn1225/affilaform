@@ -12,7 +12,8 @@ import {
     CreditCard,
     BookOpen,
     LifeBuoy,
-    UserCog
+    UserCog,
+    Users,
 } from 'lucide-react';
 
 export default function AffiliateSideNav() {
@@ -24,6 +25,11 @@ export default function AffiliateSideNav() {
             label: 'Dashboard',
             href: '/affiliate/dashboard',
             icon: <LayoutDashboard size={20} />,
+        },
+        {
+            label: 'Vendors',
+            href: '/affiliate/vendors',
+            icon: <Users size={20} />,
         },
         {
             label: 'Offer Rotators',

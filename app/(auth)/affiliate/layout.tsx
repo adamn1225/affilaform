@@ -3,7 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import '../../globals.css';
 import AffiliateSideNav from '@/components/affiliates/AffiliateSideNav';
 
-export default function VendorLayout({ children }: { children: React.ReactNode }) {
+export default function AffilLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
             <body className="flex bg-gray-50 min-w-screen min-h-screen">

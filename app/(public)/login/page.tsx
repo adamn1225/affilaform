@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect } from 'react'
 import LoginForm from '@/components/forms/LoginForm'
+import AffLoginForm from '@/components/forms/AffLoginForm';
 import { redirect } from 'next/navigation'
 
 
@@ -19,7 +20,7 @@ export default function LoginPage() {
     return (
         <div className="flex mt-8 justify-evenly gap-8">
             <div><LoginForm role="vendor" /></div>
-            <div><LoginForm role="affiliate" /></div>
+            <div><AffLoginForm role="affiliate" /></div>
         </div>
     )
 }

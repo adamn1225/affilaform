@@ -17,7 +17,11 @@ export async function POST(req: NextRequest) {
 
     const { token, user } = await res.json();
 
-    const response = NextResponse.json({ user, token });
+    const response = NextResponse.json({
+        user,
+        token,
+        redirectTo: '/affiliate/onboarding',
+    });
 
     response.cookies.set('token', token, {
         path: '/',

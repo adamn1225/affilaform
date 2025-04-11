@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 interface LoginFormProps {
     role: 'affiliate'
@@ -13,33 +14,35 @@ export default function AffLoginForm({ role }: LoginFormProps) {
     const [error, setError] = useState('')
     const router = useRouter()
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setError('')
-
+    const handleLogin = async (email: string, password: string) => {
         try {
             const res = await fetch('/api/affil-login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
-                credentials: 'include',
-            })
+            });
+
+            const data = await res.json();
 
             if (!res.ok) {
-                const err = await res.json()
-                throw new Error(err.error || 'Login failed')
+                throw new Error(data.error || 'Login failed');
             }
 
-            const { user } = await res.json()
-            window.location.href = `/${user.role}/dashboard`
-        } catch (err: any) {
-            setError(err.message)
+            if (data.redirectTo) {
+                window.location.href = data.redirectTo; // Redirect to the onboarding page
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error('Login failed');
         }
-    }
+    };
 
 
     return (
-        <form onSubmit={handleSubmit} className="border p-4 rounded shadow-sm space-y-4 max-w-md mx-auto mt-10">
+        <form onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin(email, password);
+        }} className="border p-4 rounded shadow-sm space-y-4 max-w-md mx-auto mt-10">
             <h1 className="text-2xl font-bold capitalize">{role} Login</h1>
             {error && <p className="text-red-600">{error}</p>}
             <input
