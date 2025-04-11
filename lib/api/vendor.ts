@@ -64,3 +64,35 @@ export async function getVendorWallet(): Promise<Wallet | null> {
         return null;
     }
 }
+
+export type PublicVendor = {
+    id: string;
+    company_name: string;
+    industry: string;
+    website?: string;
+    description?: string;
+    commission?: number;
+    public?: boolean;
+};
+
+export async function getAllVendors(): Promise<PublicVendor[]> {
+    try {
+        const res = await apiFetch('/api/public/vendors');
+        console.log('[getAllVendors] Response:', res); // Debug log
+        return res.vendors || [];
+    } catch (err) {
+        console.error('[getAllVendors] Failed to fetch vendors:', err);
+        return [];
+    }
+}
+
+export async function getVendorById(id: string): Promise<PublicVendor | null> {
+    try {
+        const res = await apiFetch(`/api/public/vendors/${id}`);
+        if (res && res.id) return res as PublicVendor;
+        return null;
+    } catch (err) {
+        console.error(`[getVendorById] Failed to fetch vendor ${id}:`, err);
+        return null;
+    }
+}

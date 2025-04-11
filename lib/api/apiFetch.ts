@@ -3,14 +3,12 @@ import { generateServerToken } from './jsonwebtoken';
 export async function apiFetch(url: string, options: RequestInit = {}) {
   let token: string | undefined;
 
-  // Check if running on the client
   if (typeof window !== 'undefined') {
     token = document.cookie
       .split('; ')
       .find((row) => row.startsWith('token='))
       ?.split('=')[1];
   } else {
-    // Generate a server-side token for server-side requests
     token = generateServerToken();
   }
 
@@ -28,6 +26,11 @@ export async function apiFetch(url: string, options: RequestInit = {}) {
     credentials: 'include',
     headers,
   });
+
+  if (res.status === 204) {
+    // Handle 204 No Content
+    return null;
+  }
 
   const contentType = res.headers.get('content-type') || '';
   let data;

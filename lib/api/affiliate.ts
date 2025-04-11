@@ -19,6 +19,27 @@ export type AffiliatePayout = {
   CreatedAt: string;
 };
 
+export async function updateAffiliateProfile(profileData: {
+  company_name: string;
+  contact_name: string;
+  phone: string;
+  website: string;
+  industry: string;
+}): Promise<void> {
+  try {
+    // Call apiFetch and handle the response
+    await apiFetch('/api/affiliate/profile', {
+      method: 'PATCH',
+      body: JSON.stringify(profileData),
+    });
+
+    // No need to parse the response here since apiFetch already handles it
+  } catch (err) {
+    console.error('[updateAffiliateProfile] Error:', err);
+    throw err;
+  }
+}
+
 export async function getAffiliatePayouts(): Promise<AffiliatePayout[]> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_LOCAL}/api/affiliate/payouts`, {
