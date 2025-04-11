@@ -3,16 +3,20 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import logo from '@/public/logo.png';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export default function TopNavigation() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loginOpen, setloginOpen] = useState(false);
+  const pathname = usePathname();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
   return (
-    <nav className="bg-gray-950 text-white">
+    <nav className="bg-gray-800 text-white">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex md:justify-between items-center h-16">
           {/* Logo */}
@@ -33,18 +37,32 @@ export default function TopNavigation() {
             <Link href="#contact" className="hover:text-gray-300 underline underline-offset-4">
               Support
             </Link>
-            <Link
-              href="/login"
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 rounded"
-            >
-              Login
-            </Link>
+            <div className="relative">
+              <button
+                onClick={() => setloginOpen(!loginOpen)}
+                className="flex items-center space-x-1 bg-blue-500 px-3 py-1 rounded text-white font-semibold text-lg"
+              >
+                <span>Login</span>
+                {loginOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </button>
+              {loginOpen && (
+                <div className="absolute right-[-15px] mt-3 w-48 h-fit bg-gray-700 drop-shadow rounded-md shadow-lg z-10">
+
+                  <Link href="/login/vendor" className="block py-4 h-fit text-center text-base hover:bg-gray-600 hover:underline hover:underline-offset-4">
+                    Vendor Login
+                  </Link>
+                  <Link href="/login/affiliate/" className="block py-4 h-fit text-center text-base hover:bg-gray-600 hover:underline hover:underline-offset-4">
+                    Affiliate Login
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
-            className="md:hidden text-white font-semibold text-lg underline underline-offset-4"
+            className="md:hidden  text-white font-semibold text-lg underline underline-offset-4"
           >
             Menu
           </button>
@@ -66,12 +84,20 @@ export default function TopNavigation() {
               <Link href="#contact" className="hover:text-gray-300 underline underline-offset-4">
                 Support
               </Link>
-              <Link
-                href="/login"
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-              >
-                Login
-              </Link>
+              <div className='flex flex-col gap-2'>
+                <Link
+                  href="/login/vendor"
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                >
+                  Vendor Login
+                </Link>
+                <Link
+                  href="/login/affiliate"
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                >
+                  Affiliate Login
+                </Link>
+              </div>
             </div>
           </div>
         )}

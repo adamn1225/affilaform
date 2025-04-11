@@ -89,34 +89,6 @@ export default function VendorDashboard() {
           <div>Wallet information is unavailable.</div>
         )}
       </div>
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex gap-2">
-          <button
-            onClick={() => setTab('forms')}
-            className={`px-4 py-2 rounded ${tab === 'forms' ? 'bg-black text-white' : 'bg-gray-200'}`}
-          >
-            Your Forms
-          </button>
-          <button
-            onClick={() => setTab('submissions')}
-            className={`px-4 py-2 rounded ${tab === 'submissions' ? 'bg-black text-white' : 'bg-gray-200'}`}
-          >
-            Submissions
-          </button>
-          <button
-            onClick={() => setTab('builder')}
-            className={`px-4 py-2 rounded ${tab === 'builder' ? 'bg-black text-white' : 'bg-gray-200'}`}
-          >
-            + New Form
-          </button>
-          <button
-            onClick={() => setTab('vendorsettings')}
-            className={`px-4 py-2 rounded ${tab === 'vendorsettings' ? 'bg-black text-white' : 'bg-gray-200'}`}
-          >
-            Settings
-          </button>
-        </div>
-      </div>
 
       <div className="flex justify-end w-full max-w-6xl px-4 gap-1 mt-4">
         <button

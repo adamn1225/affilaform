@@ -1,105 +1,160 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-
-type Affiliate = {
-    id: string
-    company_name: string
-    contact_name: string
-    email: string
-    phone: string
-    website: string
-    commission_rate: number
-    created_at: string
-}
-
-type Lead = {
-    id: number
-    affiliate_id: string
-}
+import { useEffect, useState } from 'react';
+import { getAffiliateCommission, getAffiliateWallet, AffiliateCommission, AffiliateWallet, getAffiliatePayouts, AffiliatePayout } from '@/lib/api/affiliate';
+import toast from 'react-hot-toast';
 
 export default function AffiliateDashboardContent() {
-    const [affiliates, setAffiliates] = useState<Affiliate[]>([])
-    const [leads, setLeads] = useState<Lead[]>([])
-    const [loading, setLoading] = useState(true)
+  const [commission, setCommission] = useState<number | ''>(''); // For commission rate
+  const [walletBalance, setWalletBalance] = useState<number | null>(null); // For wallet balance
+  const [loading, setLoading] = useState(true);
+  const [affiliateCommission, setAffiliateCommission] = useState<AffiliateCommission | null>(null);
+  const [affiliateWallet, setAffiliateWallet] = useState<AffiliateWallet | null>(null);
 
-    useEffect(() => {
-        async function fetchData() {
-          try {
-            const baseUrl = process.env.NEXT_PUBLIC_API_LOCAL;
-      
-            const [affiliatesRes, leadsRes] = await Promise.all([
-              fetch(`${baseUrl}/api/affiliates`, {
-                headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}` },
-              }),
-              fetch(`${baseUrl}/api/vendor/leads`, {
-                headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_ADMIN_TOKEN}` },
-              }),
-            ]);
-      
-            if (!affiliatesRes.ok || !leadsRes.ok) {
-              throw new Error('Failed to fetch data from one or more endpoints');
-            }
-      
-            const [affiliatesData, leadsData] = await Promise.all([
-              affiliatesRes.json(),
-              leadsRes.json(),
-            ]);
-      
-            setAffiliates(affiliatesData);
-            setLeads(leadsData);
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          } finally {
-            setLoading(false);
-          }
-        }
-      
-        fetchData();
-      }, []);
+  const [commissionError, setCommissionError] = useState<string | null>(null);
+  const [walletError, setWalletError] = useState<string | null>(null);
+  const [payouts, setPayouts] = useState<AffiliatePayout[]>([]); // For payouts
+  const [payoutError, setPayoutError] = useState<string | null>(null);
+  const fetchPayouts = async () => {
+    try {
+      const payoutsRes = await getAffiliatePayouts();
+      console.log('Fetched Payouts:', payoutsRes); // Debug log
+      if (payoutsRes) {
+        setPayouts(payoutsRes);
+      }
+    } catch (err) {
+      console.error('Error loading payouts:', err);
+      setPayoutError('Failed to load payouts');
+    }
+  };
 
-    const getLeadCount = (affiliateId: string) =>
-        leads.filter((l) => l.affiliate_id === affiliateId).length
+  const fetchCommission = async () => {
+    try {
+      const commissionRes = await getAffiliateCommission();
+      console.log('Fetched Affiliate Commission:', commissionRes); // Debug log
+      if (commissionRes) {
+        setAffiliateCommission(commissionRes);
+        setCommission(commissionRes.Commission);
+      }
+    } catch (err) {
+      console.error('Error loading affiliate commission:', err);
+      setCommissionError('Failed to load commission');
+    }
+  };
 
-    if (loading) return <div className="p-4">Loading dashboard...</div>
+  const fetchWallet = async () => {
+    try {
+      const walletRes = await getAffiliateWallet();
+      console.log('Fetched Wallet:', walletRes); // Debug log
+      if (walletRes) {
+        setAffiliateWallet(walletRes);
+        setWalletBalance(walletRes?.Balance ?? null); // Use "Balance" here
+      }
+    } catch (err) {
+      console.error('Error loading affiliate wallet:', err);
+      setWalletError('Failed to load wallet');
+    }
+  };
 
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        await Promise.all([fetchCommission(), fetchWallet(), fetchPayouts()]);
+      } catch (err) {
+        console.error('Error loading settings:', err);
+        toast.error('Failed to load settings');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+  useEffect(() => {
+    if (commissionError) {
+      toast.error(commissionError);
+    }
+  }, [commissionError]);
+
+  useEffect(() => {
+    if (walletError) {
+      toast.error(walletError);
+    }
+  }, [walletError]);
+
+  if (loading) {
     return (
-        <div className="max-w-6xl mx-auto p-6">
-            <h2 className="text-2xl font-bold mb-4">Affiliate Dashboard</h2>
-            <p className="mb-2">Total Affiliates: {affiliates.length}</p>
+      <div className="flex items-center justify-center h-screen">
+        <div className="loader"></div>
+      </div>
+    );
+  }
 
-            <div className="overflow-x-auto">
-                <table className="min-w-full border text-sm">
-                    <thead>
-                        <tr className="bg-gray-100">
-                            <th className="border px-3 py-2 text-left">Company</th>
-                            <th className="border px-3 py-2 text-left">Leads</th>
-                            <th className="border px-3 py-2 text-left">Contact</th>
-                            <th className="border px-3 py-2 text-left">Email</th>
-                            <th className="border px-3 py-2 text-left">Phone</th>
-                            <th className="border px-3 py-2 text-left">Website</th>
-                            <th className="border px-3 py-2 text-left">Joined</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {affiliates.map((a) => (
-                            <tr key={a.id} className="border-t hover:bg-gray-50">
-                                <td className="px-3 py-2 font-medium">{a.company_name}</td>
-                                <td className="px-3 py-2">{getLeadCount(a.id)}</td>
-                                <td className="px-3 py-2">{a.contact_name}</td>
-                                <td className="px-3 py-2">{a.email}</td>
-                                <td className="px-3 py-2">{a.phone}</td>
-                                <td className="px-3 py-2">
-                                    <a href={a.website} target="_blank" rel="noreferrer" className="text-blue-600 underline">
-                                        {new URL(a.website).hostname}
-                                    </a>
-                                </td>
-                                <td className="px-3 py-2">{new Date(a.created_at).toLocaleDateString()}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+  return (
+    <>
+      <div className="w-full max-w-xs mt-8">
+        <h2 className="text-lg font-semibold mb-2">Affiliate Dashboard</h2>
+        <table className="table-auto w-full text-sm text-left text-gray-700">
+          <thead>
+            <tr>
+              <th className="px-4 py-2">Metric</th>
+              <th className="px-4 py-2">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="px-4 py-2">Wallet Balance</td>
+              <td className="px-4 py-2">${walletBalance?.toFixed(2) ?? '0.00'}</td>
+            </tr>
+            <tr>
+              <td className="px-4 py-2">Commission Rate</td>
+              <td className="px-4 py-2">{commission ? `${(commission * 100).toFixed(1)}%` : 'N/A'}</td>
+            </tr>
+            <tr>
+              <td className="px-4 py-2">Total Payouts</td>
+              <td className="px-4 py-2">{payouts.length}</td>
+            </tr>
+            <tr>
+              <td className="px-4 py-2">Total Earned</td>
+              <td className="px-4 py-2">${payouts.reduce((sum, p) => sum + (p.AffiliateCut || 0), 0).toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td className="px-4 py-2">Total Paid</td>
+              <td className="px-4 py-2">${payouts.filter(p => p.Status === 'paid').reduce((sum, p) => sum + (p.AffiliateCut || 0), 0).toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td className="px-4 py-2">Pending</td>
+              <td className="px-4 py-2">${payouts.filter(p => p.Status === 'pending').reduce((sum, p) => sum + (p.AffiliateCut || 0), 0).toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      {payouts.length === 0 ? (
+        <p>No payouts available.</p>
+      ) : (
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold mb-2">Payout Details</h3>
+          <table className="table-auto w-full text-sm text-left text-gray-700">
+            <thead className='bg-gray-200 border border-gray-300'>
+              <tr className="text-gray-700 border divide-x-1 divide-gray-950 ">
+                <th className="px-4 py-2">Lead ID</th>
+                <th className="px-4 py-2">Amount</th>
+                <th className="px-4 py-2">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {payouts.map((payout) => (
+                <tr className=' border divide-x-1 divide-gray-950 ' key={payout.ID}>
+                  <td className="px-4 py-2">{payout.LeadID}</td>
+                  <td className="px-4 py-2">${payout.Amount}</td>
+                  <td className="px-4 py-2">{payout.Status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-    )
+      )}
+    </>
+  );
 }
