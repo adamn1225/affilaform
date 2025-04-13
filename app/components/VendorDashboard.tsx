@@ -117,7 +117,7 @@ export default function VendorDashboard() {
         </button>
       </div>
 
-      <div className="w-full max-w-8xl p-4 bg-white">
+      <div className="w-full max-w-8xl p-4 bg-gray-50">
         {tab === 'forms' && <VendorForms />}
         {tab === 'submissions' && <VendorSubmissions />}
         {tab === 'builder' && <FormBuilderPage />}

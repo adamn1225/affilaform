@@ -139,7 +139,7 @@ export default function FormBuilder({
 
 
   return (
-    <div className="md:p-6 md:max-w-3xl md:mx-auto">
+    <div className="md:p-6 h-full md:max-w-6xl md:mx-auto">
       <h1 className="text-xl text-center md:text-start md:text-2xl font-bold pb-3">Affiliation Form Builder</h1>
       <p className="md:hidden tracking-tight text-base pb-3 font-semibold text-justify hyphens-auto">
         (For the best experience we recommend trying out the demo on desktop)</p>
@@ -330,14 +330,15 @@ export default function FormBuilder({
           className="bg-gray-950 text-white px-4 py-2 rounded hover:bg-gray-800 w-full">
           + Add Field
         </button>
-      </div>
-
-      <button
+        <button
         onClick={saveConfig}
-        className="bg-gray-950 text-white px-4 py-2 rounded hover:bg-gray-800 block w-full mt-4"
+        className="bg-gray-950 text-white px-4 py-2 rounded hover:bg-gray-800 block w-full mt-2"
       >
         Save Form
       </button>
+      </div>
+
+
     </div>
   )
 }

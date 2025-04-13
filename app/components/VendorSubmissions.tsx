@@ -86,7 +86,7 @@ export default function VendorSubmissions() {
   if (loading) return <p>Loading submissions...</p>
 
   return (
-    <div>
+    <div className=' bg-white p-4 rounded shadow-md'>
       <h2 className="text-xl font-semibold mb-4">Form Submissions</h2>
       {leads.length === 0 ? (
         <p className="text-gray-500">No submissions yet.</p>

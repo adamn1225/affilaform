@@ -96,3 +96,33 @@ export async function getVendorById(id: string): Promise<PublicVendor | null> {
         return null;
     }
 }
+
+export type VendorProfile = {
+    CompanyName: string;
+    FirstName: string;
+    LastName: string;
+    Phone: string;
+    Website: string;
+    Industry: string;
+    Password: string;
+    Address: string;
+    Email: string,
+};
+
+interface UpdateVendorProfileResponse {
+    ok: boolean;
+    [key: string]: any; // Allow additional properties if needed
+}
+
+export async function updateVendorProfile(data: VendorProfile): Promise<UpdateVendorProfileResponse> {
+    const res = await apiFetch('/api/vendor/profile', {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+        throw new Error('Failed to update vendor profile');
+    }
+
+    return res as UpdateVendorProfileResponse;
+}

@@ -12,6 +12,7 @@ type Props = {
 
 export default function NegotiateModal({ vendorId, vendorName }: Props) {
     const user = useAuth();
+console.log('User in NegotiateModal:', user);
     const isLoggedIn = !!user; // Determine if the user is logged in
 
     const [open, setOpen] = useState(false);

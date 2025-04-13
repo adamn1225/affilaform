@@ -1,12 +1,12 @@
 export function getToken(): string | null {
-  if (typeof document === 'undefined') return null
+  if (typeof document === 'undefined') return null;
 
   try {
-    const match = document.cookie.match(/(^|;) ?token=([^;]*)(;|$)/)
-    return match ? match[2] : null
+      const match = document.cookie.match(/(^|;) ?token=([^;]*)(;|$)/);
+      return match ? match[2] : null;
   } catch (err) {
-    console.error('Cookie read error:', err)
-    return null
+      console.error('Token retrieval error:', err);
+      return null;
   }
 }
 

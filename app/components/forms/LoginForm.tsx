@@ -3,11 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-interface LoginFormProps {
-  role: 'vendor' | 'affiliate'
-}
-
-export default function LoginForm({ role }: LoginFormProps) {
+export default function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -31,7 +27,7 @@ export default function LoginForm({ role }: LoginFormProps) {
       }
 
       const { user } = await res.json()
-      window.location.href = `/${user.role}/dashboard`
+      window.location.href = `/vendor/dashboard`
     } catch (err: any) {
       setError(err.message)
     }
@@ -39,8 +35,8 @@ export default function LoginForm({ role }: LoginFormProps) {
 
 
   return (
-    <form onSubmit={handleSubmit} className="border p-4 rounded shadow-sm space-y-4 max-w-md mx-auto mt-10">
-      <h1 className="text-2xl font-bold capitalize">{role} Login</h1>
+    <form onSubmit={handleSubmit} className="p-4 space-y-4 max-w-md mx-auto mt-10">
+      <h1 className="text-2xl font-bold capitalize">Vendor Login</h1>
       {error && <p className="text-red-600">{error}</p>}
       <input
         className="border p-2 w-full"
@@ -61,13 +57,13 @@ export default function LoginForm({ role }: LoginFormProps) {
       <div className="text-center mt-4">
         <p className="text-sm text-gray-600">
           Forgot your password?{' '}
-          <a href={`/${role}/reset-password`} className="text-blue-500 hover:underline">
+          <a href={`/vendor/reset-password`} className="text-blue-500 hover:underline">
             Reset Password
           </a>
         </p>
         <p className="text-sm text-gray-600 mt-2">
           Don't have an account?{' '}
-          <a href={`/${role}/signup`} className="text-blue-500 hover:underline">
+          <a href={`/vendor/signup`} className="text-blue-500 hover:underline">
             Sign Up
           </a>
         </p>

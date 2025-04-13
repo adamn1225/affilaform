@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { getAllVendors, PublicVendor } from '@/lib/api/vendor';
-import NegotiateModal from '@/app/components/NegotiatieModal';
+import NegotiateModal from '@/app/components/NegotiateModal';
 import { getToken, decodeToken } from '@/lib/auth/token';
 
 export default function PublicVendorDirectory() {
@@ -253,7 +253,7 @@ export default function PublicVendorDirectory() {
 
                                             <div className='flex flex-col gap-2'>
                                                 <Link
-                                                    href={`affiliate/vendors/${vendor.id}`}
+                                                    href={`/affiliate/vendors/${vendor.id}`}
                                                     className="inline-block mt-4 text-sm px-4 py-1 font-semibold bg-black text-white rounded hover:bg-gray-800"
                                                 >
                                                     View Program

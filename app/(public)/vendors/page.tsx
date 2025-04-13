@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { getAllVendors, PublicVendor } from '@/lib/api/vendor';
-import NegotiateModal from '@/app/components/NegotiatieModal';
+import NegotiateModal from '@/app/components/NegotiateModal';
 
 export default function PublicVendorDirectory() {
     const [vendors, setVendors] = useState<PublicVendor[]>([]);

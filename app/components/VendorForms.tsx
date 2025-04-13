@@ -49,7 +49,7 @@ export default function VendorForms() {
   if (loading) return <p>Loading forms...</p>;
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col items-center w-full bg-white py-4 shadow-md">
       <div className="flex justify-between items-center w-full max-w-6xl mb-4">
         <h2 className="text-xl font-semibold">Your Saved Forms</h2>
         <input

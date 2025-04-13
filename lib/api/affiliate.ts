@@ -7,17 +7,7 @@ export type AffiliateCommission = {
   CreatedAt: string;
 };
 
-export type AffiliatePayout = {
-  ID: number;
-  AffiliateID: string;
-  LeadID: number;
-  Amount: number;
-  AffiliateCut: number;
-  PlatformFee: number;
-  PaidAt?: string | null;
-  Status: string;
-  CreatedAt: string;
-};
+
 
 export async function updateAffiliateProfile(profileData: {
   company_name: string;
@@ -40,28 +30,7 @@ export async function updateAffiliateProfile(profileData: {
   }
 }
 
-export async function getAffiliatePayouts(): Promise<AffiliatePayout[]> {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_LOCAL}/api/affiliate/payouts`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1")}`,
-      },
-    });
 
-    if (!res.ok) {
-      console.error('[getAffiliatePayouts] Failed:', await res.json());
-      return [];
-    }
-
-    const data = await res.json();
-    console.log('[getAffiliatePayouts] Response:', data);
-    return data.payouts;
-  } catch (err) {
-    console.error('[getAffiliatePayouts] Error:', err);
-    return [];
-  }
-}
 
 
 export async function updateAffiliateCommission(commission: number) {
@@ -95,6 +64,35 @@ export async function getAffiliateWallet(): Promise<AffiliateWallet | null> {
   } catch (err) {
     console.error("[getAffiliateWallet] Failed to fetch:", err);
     return null;
+  }
+}
+
+export type AffiliatePayout = {
+  ID: number;
+  AffiliateID: string;
+  LeadID: number;
+  Amount: number;
+  AffiliateCut: number;
+  PlatformFee: number;
+  PaidAt?: string | null;
+  Status: string;
+  CreatedAt: string;
+};
+
+export async function getAffiliatePayouts(): Promise<AffiliatePayout[]> {
+  try {
+    const res = await apiFetch(`/api/affiliate/payouts`);
+    console.log("[getAffiliatePayouts] Raw Response:", res);
+
+    if (res && typeof res === "object" && "payouts" in res && Array.isArray(res.payouts)) {
+      return res.payouts as AffiliatePayout[];
+    } else {
+      console.warn("[getAffiliatePayouts] Invalid response structure:", res);
+      return [];
+    }
+  } catch (err) {
+    console.error("[getAffiliatePayouts] Failed to fetch:", err);
+    return [];
   }
 }
 

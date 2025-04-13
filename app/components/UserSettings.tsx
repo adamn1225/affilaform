@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { apiFetch } from '@/lib/api/apiFetch';
 import { motion, AnimatePresence } from 'framer-motion';
+import { VendorProfile, updateVendorProfile } from '@/lib/api/me';
 
 
 export default function UserSettings() {
@@ -15,7 +16,7 @@ export default function UserSettings() {
         last_name: string;
         company_name: string;
         industry: string;
-        password?: string; // Optional password field
+        Password?: string; // Optional password field
     }
 
     const [user, setUser] = useState<UserProfile>({
@@ -27,6 +28,7 @@ export default function UserSettings() {
         last_name: '',
         company_name: '',
         industry: '',
+        Password: '',
     });
 
     const [activeTab, setActiveTab] = useState<'profile' | 'password' | 'notifications'>('profile');
@@ -57,24 +59,24 @@ export default function UserSettings() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
+    
         if (activeTab === 'password' && showPasswordFields && password !== confirmPassword) {
             toast.error('Passwords do not match');
             return;
         }
-
+    
         try {
             const payload = { ...user };
             if (activeTab === 'password' && showPasswordFields) {
-                payload['password'] = password;
+                payload.Password = password; // Add the password field if updating the password
             }
-
-            await apiFetch('/api/user/update', {
-                method: 'PATCH',
-                body: JSON.stringify(payload),
-            });
+    
+            const response = await updateVendorProfile(payload as any); // Use the updated function
+            console.log('[UserSettings] Update Response:', response);
+    
             toast.success('Profile updated successfully');
         } catch (err) {
+            console.error('[UserSettings] Failed to update profile:', err);
             toast.error('Failed to update profile');
         }
     };

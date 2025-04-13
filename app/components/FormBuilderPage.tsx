@@ -48,9 +48,9 @@ export default function FormBuilderPage() {
 
   return (
     <>
-      <div className="w-full py-12 md:px-4">
+      <div className="w-full py-12">
         {/* Responsive Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded border-gray-100 shadow">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded">
           {/* Form Builder */}
           <FormBuilder
             fields={fields}

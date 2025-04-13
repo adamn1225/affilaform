@@ -42,7 +42,7 @@ export default function AffiliateSideNav() {
             icon: <CreditCard size={20} />,
         },
         {
-            label: 'Documentation',
+            label: 'Guides',
             href: '/affiliate/documentation',
             icon: <BookOpen size={20} />,
         },
@@ -71,9 +71,9 @@ export default function AffiliateSideNav() {
                 <div className="flex flex-col h-full">
                     {/* Logo */}
                     <div className="p-6 border-b border-gray-800">
-                        <Link href="/" className="flex items-center space-x-2">
+                       <div className="flex items-center space-x-2">
                             <Image src={logo} alt="Logo" width={160} height={40} />
-                        </Link>
+                        </div>
                     </div>
 
                     {/* Nav Links */}
