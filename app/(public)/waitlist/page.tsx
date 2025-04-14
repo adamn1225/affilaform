@@ -35,7 +35,7 @@ export default function WaitlistPage() {
       const data = await res.json();
       toast.success(data.message || 'You’re on the list!');
       setEmail('');
-      setRole(''); // Reset role selection
+      setRole('');
     } catch (err: any) {
       toast.error(err.message || 'Something went wrong. Try again.');
     } finally {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getAffiliateCommission, getAffiliateWallet, AffiliateCommission, AffiliateWallet, getAffiliatePayouts, AffiliatePayout } from '@/lib/api/affiliate';
+import RotatorClickWidget from '@/app/components/widgets/RotatorWidget';
 import toast from 'react-hot-toast';
 
 export default function AffiliateDashboardContent() {
@@ -97,6 +98,7 @@ export default function AffiliateDashboardContent() {
         <div className="w-fit  mt-12">
           <h2 className="text-lg font-semibold mb-2">Affiliate Dashboard</h2>
           <table className="table-auto w-fit text-sm text-left text-gray-700 border border-gray-400">
+          <RotatorClickWidget />
             <thead>
               <tr>
                 <th className="px-4 py-2">Metric</th>

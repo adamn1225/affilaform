@@ -96,6 +96,7 @@ export async function addRotatorLink(rotatorId: number, url: string, weight: num
         const res = await apiFetch(`/api/affiliate/rotators/${rotatorId}/links`, {
             method: 'POST',
             body: JSON.stringify({ url, weight }),
+            credentials: 'include',
         });
 
         // Directly return the response if it matches the expected structure
@@ -120,7 +121,7 @@ export async function addRotatorLink(rotatorId: number, url: string, weight: num
 
 export async function getRotatorLinks(rotatorId: number): Promise<RotatorLink[]> {
     try {
-        const res = await apiFetch(`/api/affiliate/rotator/link?rotator_id=${rotatorId}`)
+        const res = await fetch(`/api/affiliate/rotator/link?rotator_id=${rotatorId}`)
 
         if (!Array.isArray(res)) {
             console.error('[getRotatorLinks] Expected an array, got:', res)
@@ -132,4 +133,16 @@ export async function getRotatorLinks(rotatorId: number): Promise<RotatorLink[]>
         console.error('[getRotatorLinks] Failed to fetch:', error)
         return []
     }
+}
+
+export type RotatorClickSummary = {
+    rotator_id: number;
+    name: string;
+    clicks: number;
+  };
+  
+  export async function getRotatorClickSummary(): Promise<RotatorClickSummary[]> {
+    const res = await apiFetch('/api/affiliate/rotators/clicks-summary');
+    if (!res.ok) throw new Error('Failed to fetch click summary');
+    return res.json();
 }

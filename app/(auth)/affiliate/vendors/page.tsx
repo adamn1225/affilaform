@@ -206,7 +206,7 @@ export default function PublicVendorDirectory() {
                             {filtered.map((vendor) => (
                                 <div
                                     key={vendor.id}
-                                    className="w-full flex flex-col items-start justify-evenly p-4 rounded-xl shadow-lg drop-shadow bg-white"
+                                    className="w-full flex flex-col items-start justify-evenly p-4 rounded-xl shadow-lg drop-shadow bg-gray-50"
                                 >
                                     <div className='flex gap-4 justify-between w-4/5'>
                                         <div className='flex flex-col items-center'>
@@ -216,10 +216,10 @@ export default function PublicVendorDirectory() {
                                                 onError={(e) => {
                                                     (e.target as HTMLImageElement).src = '/logos/default.png';
                                                 }}
-                                                className="w-48 max-h-24 object-contain rounded bg-white p-4"
+                                                className="w-44 rounded-full max-h-24 object-contain bg-gray-950 p-2"
                                             />
-                                            <h3 className="font-medium text-lg">{vendor.company_name}</h3>
-                                            <p className="text-gray-600 text-sm mb-2">{vendor.industry}</p>
+                                            <h3 className="font-semibold text-lg">{vendor.company_name}</h3>
+                                            <p className="text-gray-600 font-semibold text-sm mb-2">{vendor.industry}</p>
                                             {vendor.website && (
                                                 <a
                                                     href={vendor.website}
@@ -239,7 +239,7 @@ export default function PublicVendorDirectory() {
                                                 return (
                                                     <>
                                                         {commission > 0 ? (
-                                                            <p className="text-sm text-green-700 font-medium">
+                                                            <p className="text-sm text-green-700 font-semibold">
                                                                 Commission: {(commission * 100).toFixed(0)}%
                                                             </p>
                                                         ) : (
