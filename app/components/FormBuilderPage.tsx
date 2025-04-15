@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { FormField } from '@/components/FormBuilder'
 
 export default function FormBuilderPage() {
-  const [affiliateId, setAffiliateId] = useState('preview-mode')
+  const [affiliateId, setAffiliateId] = useState<number | null>(null)
   const [formTitle, setFormTitle] = useState('Your Custom Title')
   const [buttonColor, setButtonColor] = useState('#000000')
   const [buttonText, setButtonText] = useState('Submit Request')
@@ -61,7 +61,7 @@ export default function FormBuilderPage() {
             setButtonColor={setButtonColor}
             buttonText={buttonText}
             setButtonText={setButtonText}
-            affiliateId={affiliateId}
+            affiliateId={affiliateId || 0}
             setAffiliateId={setAffiliateId}
             onSave={(iframe) => setIframeCode(iframe)}
           />

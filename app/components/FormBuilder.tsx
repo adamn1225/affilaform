@@ -34,8 +34,8 @@ interface FormBuilderProps {
   setButtonColor: (val: string) => void
   buttonText: string
   setButtonText: (val: string) => void
-  affiliateId: string
-  setAffiliateId: (val: string) => void
+  affiliateId: number
+  setAffiliateId: (val: number) => void
   onSave?: (iframeCode: string) => void
 }
 
@@ -331,11 +331,11 @@ export default function FormBuilder({
           + Add Field
         </button>
         <button
-        onClick={saveConfig}
-        className="bg-gray-950 text-white px-4 py-2 rounded hover:bg-gray-800 block w-full mt-2"
-      >
-        Save Form
-      </button>
+          onClick={saveConfig}
+          className="bg-gray-950 text-white px-4 py-2 rounded hover:bg-gray-800 block w-full mt-2"
+        >
+          Save Form
+        </button>
       </div>
 
 

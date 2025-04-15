@@ -3,14 +3,8 @@ import { generateServerToken } from './jsonwebtoken';
 export async function apiFetch(url: string, options: RequestInit = {}) {
   let token: string | undefined;
 
-  if (typeof window !== 'undefined') {
-    token = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('token='))
-      ?.split('=')[1];
-  } else {
-    token = generateServerToken();
-  }
+  token = await generateServerToken();
+
 
   const headers = {
     ...options.headers,

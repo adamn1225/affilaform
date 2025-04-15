@@ -2,7 +2,7 @@ import { apiFetch } from "./apiFetch";
 
 export type AffiliateCommission = {
   ID: number;
-  AffiliateID: string;
+  AffiliateID: number;
   Commission: number;
   CreatedAt: string;
 };
@@ -45,7 +45,7 @@ export async function updateAffiliateCommission(commission: number) {
 
 export type AffiliateWallet = {
   ID: number;
-  AffiliateID: string;
+  AffiliateID: number;
   Balance: number;
   UpdatedAt: string;
 };
@@ -69,7 +69,7 @@ export async function getAffiliateWallet(): Promise<AffiliateWallet | null> {
 
 export type AffiliatePayout = {
   ID: number;
-  AffiliateID: string;
+  AffiliateID: number;
   LeadID: number;
   Amount: number;
   AffiliateCut: number;

@@ -8,6 +8,7 @@ export async function POST(req: NextRequest) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        credentials: 'include',
     });
 
     if (!res.ok) {
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
         path: '/',
         httpOnly: true, // Use httpOnly for security
         sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
+        secure: false,
     });
 
     return response;

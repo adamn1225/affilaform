@@ -2,7 +2,7 @@ import { apiFetch } from './apiFetch'
 
 export type OfferRotator = {
     ID: number
-    AffiliateID: string
+    AffiliateID: number
     Name: string
     Slug: string
     Strategy: string
@@ -72,7 +72,7 @@ export async function GetRotatorByID(rotatorId: number): Promise<RotatorDetailRe
                 Name: res.rotator.Name as string,
                 Slug: res.rotator.Slug as string,
                 Strategy: res.rotator.Strategy as string,
-                AffiliateID: res.rotator.AffiliateID as string,
+                AffiliateID: res.rotator.AffiliateID as number,
                 CreatedAt: res.rotator.CreatedAt as string,
             },
             links: (res.links || []).map((link: any): RotatorLink => ({
@@ -119,19 +119,30 @@ export async function addRotatorLink(rotatorId: number, url: string, weight: num
     }
 }
 
-export async function getRotatorLinks(rotatorId: number): Promise<RotatorLink[]> {
+export async function getRotatorPreview(slug: string): Promise<{ url: string; name: string; strategy: string } | null> {
     try {
-        const res = await fetch(`/api/affiliate/rotator/link?rotator_id=${rotatorId}`)
+        const res = await apiFetch(`/api/public/rotators/${slug}`);
 
-        if (!Array.isArray(res)) {
-            console.error('[getRotatorLinks] Expected an array, got:', res)
-            return []
+        if (!res || typeof res !== 'object' || !res.rotator || !Array.isArray(res.links)) {
+            console.error('[getRotatorPreview] Invalid response:', res);
+            return null;
         }
 
-        return res // ← direct return of array
+        // Extract the first link's URL (or apply your selection logic)
+        const firstLink = res.links[0];
+        if (!firstLink || !firstLink.URL) {
+            console.error('[getRotatorPreview] No valid links found:', res.links);
+            return null;
+        }
+
+        return {
+            url: firstLink.URL as string,
+            name: res.rotator.Name as string,
+            strategy: res.rotator.Strategy as string,
+        };
     } catch (error) {
-        console.error('[getRotatorLinks] Failed to fetch:', error)
-        return []
+        console.error('[getRotatorPreview] Failed to fetch rotator preview:', error);
+        return null;
     }
 }
 
@@ -139,10 +150,35 @@ export type RotatorClickSummary = {
     rotator_id: number;
     name: string;
     clicks: number;
-  };
-  
-  export async function getRotatorClickSummary(): Promise<RotatorClickSummary[]> {
+};
+
+export async function getRotatorClickSummary(): Promise<RotatorClickSummary[]> {
     const res = await apiFetch('/api/affiliate/rotators/clicks-summary');
     if (!res.ok) throw new Error('Failed to fetch click summary');
     return res.json();
+}
+
+export async function deleteRotatorLink(rotatorId: number, linkId: number): Promise<boolean> {
+    try {
+        await apiFetch(`/api/affiliate/rotators/${rotatorId}/links/${linkId}`, {
+            method: 'DELETE',
+        });
+        return true; // Indicates success
+    } catch (error) {
+        console.error('[deleteRotatorLink] Failed to delete link:', error);
+        return false; // Indicates failure without throwing
+    }
+}
+
+export async function updateRotatorLinkWeight(rotatorId: number, linkId: number, weight: number): Promise<{ Weight: number }> {
+    try {
+        const res = await apiFetch(`/api/affiliate/rotators/${rotatorId}/links/${linkId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ weight }),
+        });
+        return res; // Return the updated link data
+    } catch (error) {
+        console.error('[updateRotatorLinkWeight] Failed to update weight:', error);
+        throw error; // Propagate the error to the caller
+    }
 }

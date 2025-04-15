@@ -1,21 +1,10 @@
-import jwt from 'jsonwebtoken';
+import { SignJWT } from 'jose';
 
-export function generateServerToken(): string {
-    const secret = process.env.NEXT_PUBLIC_JWT_SECRET;
+export async function generateServerToken(): Promise<string> {
+    const secret = new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET);
 
-    if (!secret) {
-        throw new Error('JWT secret is not defined in the environment variables');
-    }
-
-    // Generate a token with the required claims
-    const token = jwt.sign(
-        {
-            user_id: '1',
-            role: 'vendor',
-            exp: Math.floor(Date.now() / 1000) + 60 * 60,
-        },
-        secret
-    );
-
-    return token;
+    return await new SignJWT({ user_id: 1, role: 'affiliate' })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setExpirationTime('24h')
+        .sign(secret);
 }

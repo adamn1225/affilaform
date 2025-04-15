@@ -3,7 +3,7 @@ import { apiFetch } from './apiFetch';
 export type VendorCommission = {
     ID: number;
     VendorID: number;
-    AffiliateID?: string | null;
+    AffiliateID?: number | null;
     Commission: number;
     CreatedAt: string;
 };

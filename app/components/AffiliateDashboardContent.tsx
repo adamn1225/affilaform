@@ -1,157 +1,93 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getAffiliateCommission, getAffiliateWallet, AffiliateCommission, AffiliateWallet, getAffiliatePayouts, AffiliatePayout } from '@/lib/api/affiliate';
-import RotatorClickWidget from '@/app/components/widgets/RotatorWidget';
+import {
+  getAffiliateCommission,
+  getAffiliateWallet,
+  getAffiliatePayouts,
+  AffiliatePayout,
+} from '@/lib/api/affiliate';
 import toast from 'react-hot-toast';
 
 export default function AffiliateDashboardContent() {
-  const [commission, setCommission] = useState<number | ''>(''); // For commission rate
-  const [walletBalance, setWalletBalance] = useState<number | null>(null); // For wallet balance
+  const [commission, setCommission] = useState<number | ''>('');
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const [affiliateCommission, setAffiliateCommission] = useState<AffiliateCommission | null>(null);
-  const [affiliateWallet, setAffiliateWallet] = useState<AffiliateWallet | null>(null);
+  const [payouts, setPayouts] = useState<AffiliatePayout[]>([]);
+  const [errors, setErrors] = useState<string[]>([]);
 
-  const [commissionError, setCommissionError] = useState<string | null>(null);
-  const [walletError, setWalletError] = useState<string | null>(null);
-  const [payouts, setPayouts] = useState<AffiliatePayout[]>([]); // For payouts
-  const [payoutError, setPayoutError] = useState<string | null>(null);
-  const fetchPayouts = async () => {
+  const fetchData = async () => {
     try {
-      const payoutsRes = await getAffiliatePayouts();
-      console.log('Fetched Payouts:', payoutsRes); // Debug log
-      if (payoutsRes) {
-        setPayouts(payoutsRes);
-      }
-    } catch (err) {
-      console.error('Error loading payouts:', err);
-      setPayoutError('Failed to load payouts');
-    }
-  };
+      const [walletRes, commissionRes, payoutsRes] = await Promise.all([
+        getAffiliateWallet(),
+        getAffiliateCommission(),
+        getAffiliatePayouts(),
+      ]);
 
-  const fetchCommission = async () => {
-    try {
-      const commissionRes = await getAffiliateCommission();
-      console.log('Fetched Affiliate Commission:', commissionRes); // Debug log
-      if (commissionRes) {
-        setAffiliateCommission(commissionRes);
-        setCommission(commissionRes.Commission);
-      }
+      if (walletRes) setWalletBalance(walletRes.Balance);
+      if (commissionRes) setCommission(commissionRes.Commission);
+      if (payoutsRes) setPayouts(payoutsRes);
     } catch (err) {
-      console.error('Error loading affiliate commission:', err);
-      setCommissionError('Failed to load commission');
-    }
-  };
-
-  const fetchWallet = async () => {
-    try {
-      const walletRes = await getAffiliateWallet();
-      console.log('Fetched Wallet:', walletRes); // Debug log
-      if (walletRes) {
-        setAffiliateWallet(walletRes);
-        setWalletBalance(walletRes?.Balance ?? null); // Use "Balance" here
-      }
-    } catch (err) {
-      console.error('Error loading affiliate wallet:', err);
-      setWalletError('Failed to load wallet');
+      toast.error('Error loading dashboard data');
+      setErrors((prev) => [...prev, 'Failed to load one or more data sources']);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        await Promise.all([fetchCommission(), fetchWallet(), fetchPayouts()]);
-      } catch (err) {
-        console.error('Error loading settings:', err);
-        toast.error('Failed to load settings');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSettings();
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    if (commissionError) {
-      toast.error(commissionError);
-    }
-  }, [commissionError]);
-
-  useEffect(() => {
-    if (walletError) {
-      toast.error(walletError);
-    }
-  }, [walletError]);
+  const totalEarned = payouts.reduce((sum, p) => sum + (p.AffiliateCut || 0), 0);
+  const totalPaid = payouts.filter(p => p.Status === 'paid').reduce((sum, p) => sum + (p.AffiliateCut || 0), 0);
+  const totalPending = payouts.filter(p => p.Status === 'pending').reduce((sum, p) => sum + (p.AffiliateCut || 0), 0);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex justify-center items-center h-screen">
         <div className="loader"></div>
       </div>
     );
   }
 
   return (
-    <>
-      <div className="flex items-start gap-8 w-full justify-center py-2">
-        <div className="w-fit  mt-12">
-          <h2 className="text-lg font-semibold mb-2">Affiliate Dashboard</h2>
-          <table className="table-auto w-fit text-sm text-left text-gray-700 border border-gray-400">
-          <RotatorClickWidget />
-            <thead>
-              <tr>
-                <th className="px-4 py-2">Metric</th>
-                <th className="px-4 py-2">Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="px-4 py-2">Wallet Balance</td>
-                <td className="px-4 py-2">${walletBalance?.toFixed(2) ?? '0.00'}</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2">Commission Rate</td>
-                <td className="px-4 py-2">{commission ? `${(commission * 100).toFixed(1)}%` : 'N/A'}</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2">Total Payouts</td>
-                <td className="px-4 py-2">{payouts.length}</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2">Total Earned</td>
-                <td className="px-4 py-2">${payouts.reduce((sum, p) => sum + (p.AffiliateCut || 0), 0).toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2">Total Paid</td>
-                <td className="px-4 py-2">${payouts.filter(p => p.Status === 'paid').reduce((sum, p) => sum + (p.AffiliateCut || 0), 0).toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-2">Pending</td>
-                <td className="px-4 py-2">${payouts.filter(p => p.Status === 'pending').reduce((sum, p) => sum + (p.AffiliateCut || 0), 0).toFixed(2)}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <div className="space-y-8 mt-10 max-w-7xl mx-auto">
+      <h1 className="text-2xl font-bold">Affiliate Dashboard</h1>
+
+      {/* Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <MetricCard label="Wallet Balance" value={`$${walletBalance?.toFixed(2) ?? '0.00'}`} />
+        <MetricCard label="Commission Rate" value={commission ? `${(commission * 100).toFixed(1)}%` : 'N/A'} />
+        <MetricCard label="Total Payouts" value={payouts.length.toString()} />
+        <MetricCard label="Total Earned" value={`$${totalEarned.toFixed(2)}`} />
+        <MetricCard label="Total Paid" value={`$${totalPaid.toFixed(2)}`} />
+        <MetricCard label="Pending" value={`$${totalPending.toFixed(2)}`} />
+      </div>
+
+      {/* Payout Table */}
+      <div className="bg-white border rounded-lg shadow p-4">
+        <h2 className="text-lg font-semibold mb-4">Payout Details</h2>
         {payouts.length === 0 ? (
-          <p>No payouts available.</p>
+          <p className="text-gray-600 text-sm">No payouts available.</p>
         ) : (
-          <div className="mt-14 w-full">
-            <h3 className="text-lg font-semibold mb-2">Payout Details</h3>
-            <table className="w-full text-sm text-left text-gray-700">
-              <thead className='bg-gray-800 border divide-gray-50 divide-x-gray-50'>
-                <tr className="text-gray-50 divide-x-1 divide-gray-400">
+          <div className="overflow-auto">
+            <table className="min-w-full text-sm text-left">
+              <thead className="bg-gray-100 border-b">
+                <tr>
                   <th className="px-4 py-2">Lead ID</th>
                   <th className="px-4 py-2">Amount</th>
                   <th className="px-4 py-2">Status</th>
+                  <th className="px-4 py-2">Date</th>
                 </tr>
               </thead>
-              <tbody className='bg-gray-50 border w-fit border-gray-800'>
+              <tbody>
                 {payouts.map((payout) => (
-                  <tr className=' border divide-x-1 divide-gray-950 ' key={payout.ID}>
-                    <td className="px-3 py-2">{payout.LeadID}</td>
+                  <tr key={payout.ID} className="border-t hover:bg-gray-50">
+                    <td className="px-4 py-2">{payout.LeadID}</td>
                     <td className="px-4 py-2">${payout.Amount}</td>
-                    <td className="px-4 py-2">{payout.Status}</td>
+                    <td className="px-4 py-2 capitalize">{payout.Status}</td>
+                    <td className="px-4 py-2">{new Date(payout.CreatedAt).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -159,6 +95,16 @@ export default function AffiliateDashboardContent() {
           </div>
         )}
       </div>
-    </>
+    </div>
+  );
+}
+
+// Simple reusable stat box
+function MetricCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-white border rounded-lg shadow px-4 py-5 flex flex-col gap-2">
+      <p className="text-sm text-gray-500">{label}</p>
+      <p className="text-lg font-bold text-gray-800">{value}</p>
+    </div>
   );
 }
