@@ -1,7 +1,7 @@
 import { apiFetch } from './apiFetch'
 
 export async function getLeadsByForm(formId: string) {
-  const res = await apiFetch(`/api/leads?form_id=${formId}`)
+  const res = await apiFetch(`/api/leads/${formId}`)
 
   if (!res || !Array.isArray(res)) {
     console.error('[getLeadsByForm] Invalid response:', res)

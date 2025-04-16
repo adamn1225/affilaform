@@ -36,3 +36,29 @@ export type FormConfig = {
   button_color: string
   fields: any[]
 }
+
+export type FormAnalytics = {
+  FormID: number
+  Views: number
+  Submissions: number
+}
+
+export async function getFormAnalytics(): Promise<FormAnalytics[]> {
+  const res = await apiFetch('/api/vendor/form-analytics')
+  if (!res || !Array.isArray(res)) {
+    console.error('[getFormAnalytics] Invalid response:', res)
+    return []
+  }
+  return res
+}
+
+export type ChartPoint = {
+  date: string
+  views: number
+  submissions: number
+}
+
+export async function getFormChartData(formId: number): Promise<ChartPoint[]> {
+  const res = await apiFetch(`/api/vendor/form-chart?form_id=${formId}`)
+  return res || []
+}

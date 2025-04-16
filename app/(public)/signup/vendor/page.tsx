@@ -1,5 +1,4 @@
-import SignupForm from '@/components/forms/SignupForm'
-
+import VendorSignup from '@/components/forms/VendorSignup'
 export default function VendorSignupPage() {
-  return <SignupForm role="vendor" />
+  return <VendorSignup role="vendor" />
 }

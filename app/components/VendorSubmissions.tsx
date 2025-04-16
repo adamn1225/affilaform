@@ -4,6 +4,17 @@ import { useEffect, useState } from 'react'
 import { getLeadsByForm, Lead } from '@/lib/api/leads'
 import { getMyForms } from '@/lib/api/forms'
 import { ChevronUp, ChevronDown } from 'lucide-react' // Import sorting icons
+import { getFormAnalytics, FormAnalytics } from '@/lib/api/forms'
+import { getFormChartData, ChartPoint } from '@/lib/api/forms'
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts'
 
 export default function VendorSubmissions() {
   const [leads, setLeads] = useState<Lead[]>([])
@@ -12,6 +23,8 @@ export default function VendorSubmissions() {
   const [searchQuery, setSearchQuery] = useState('')
   const [sortField, setSortField] = useState<string | null>(null)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [analytics, setAnalytics] = useState<FormAnalytics[]>([])
+  const [chartsData, setChartsData] = useState<ChartPoint[]>([])
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase()
@@ -49,6 +62,8 @@ export default function VendorSubmissions() {
     async function fetchSubmissions() {
       try {
         const forms = await getMyForms()
+        const analyticsData = await getFormAnalytics()
+        setAnalytics(analyticsData)
         if (!forms || !Array.isArray(forms) || forms.length === 0) {
           console.warn('[VendorSubmissions] No forms found or invalid response')
           setLoading(false)
@@ -57,7 +72,8 @@ export default function VendorSubmissions() {
 
         const formId = forms[0].id
         const rawLeads = await getLeadsByForm(formId.toString())
-
+        const chartSeries = await getFormChartData(formId)
+        setChartsData(chartSeries)
         // Map the raw API response to match the expected structure
         const mappedLeads = rawLeads.map((lead: any) => ({
           id: lead.ID,
@@ -83,6 +99,18 @@ export default function VendorSubmissions() {
     fetchSubmissions()
   }, [])
 
+  const chartData = leads.reduce((acc: Record<string, number>, lead) => {
+    const date = new Date(lead.created_at).toISOString().split('T')[0]
+    acc[date] = (acc[date] || 0) + 1
+    return acc
+  }, {})
+
+  // Convert to chart-friendly format
+  const submissionSeries = Object.entries(chartData).map(([date, count]) => ({
+    date,
+    submissions: count,
+  }))
+
   if (loading) return <p>Loading submissions...</p>
 
   return (
@@ -102,6 +130,28 @@ export default function VendorSubmissions() {
             />
           </div>
           <div className="overflow-x-auto">
+            <div className="mb-6">
+              <h3 className="text-lg font-bold">Form Analytics</h3>
+              <ul className="text-sm text-gray-600 list-disc pl-5">
+                {analytics.map((item) => (
+                  <li key={item.FormID}>
+                    Form ID <b>{item.FormID}</b>: <b>{item.Views}</b> views, <b>{item.Submissions}</b> submissions
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="w-full h-64 bg-white p-4 border rounded mb-6">
+              <h3 className="text-lg font-semibold mb-2">Submissions Per Day</h3>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={submissionSeries}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="submissions" fill="#2563eb" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
             <table className="min-w-full border">
               <thead>
                 <tr className="bg-zinc-800 text-white text-left">

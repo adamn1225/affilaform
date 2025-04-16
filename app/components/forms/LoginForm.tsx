@@ -16,9 +16,7 @@ export default function LoginForm() {
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
+        body: JSON.stringify({ email, password }), // Only send the body
       })
 
       if (!res.ok) {
@@ -32,7 +30,6 @@ export default function LoginForm() {
       setError(err.message)
     }
   }
-
 
   return (
     <form onSubmit={handleSubmit} className="p-4 space-y-4 max-w-md mx-auto mt-10">
@@ -67,19 +64,15 @@ export default function LoginForm() {
             Sign Up
           </a>
         </p>
-
       </div>
       <div className="text-center flex gap-1 items-center justify-center mt-4">
-        <label className="text-sm text-gray-600">
-        </label>
+        <label className="text-sm text-gray-600"></label>
         <input
           type="checkbox"
           className="border p-2 w-4 h-4"
         />
         Remember Me
       </div>
-
-
     </form>
   )
 }

@@ -6,8 +6,9 @@ export async function POST(req: NextRequest) {
     // Send login request to the backend server
     const res = await fetch('http://localhost:8080/api/vendor/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' }, // Centralized headers
         body: JSON.stringify(body),
+        credentials: 'include', // Include cookies in the request
     });
 
     if (!res.ok) {
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
         path: '/',
         httpOnly: true, // Use httpOnly for security
         sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
+        secure: false,
     });
 
     return response;

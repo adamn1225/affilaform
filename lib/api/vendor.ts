@@ -30,15 +30,24 @@ export async function updateVendorCommission(commission: number) {
     return apiFetch('/api/vendor/commission', {
         method: 'PATCH',
         body: JSON.stringify({ commission }),
+        credentials: 'include',
     })
 }
 
 export type Wallet = {
-    ID?: number;
-    VendorID?: number;
-    balance?: number;
-    UpdatedAt?: string;
-};
+    ID?: number
+    VendorID?: number
+    balance?: number
+    BillingAddress?: string
+    BillingCity?: string
+    BillingState?: string
+    BillingZip?: string
+    BillingCountry?: string
+    UpdatedAt?: string
+}
+
+
+
 
 export async function getVendorWallet(): Promise<Wallet | null> {
     try {
@@ -48,11 +57,16 @@ export async function getVendorWallet(): Promise<Wallet | null> {
         // Normalize the response structure
         if (res && typeof res === 'object' && 'Balance' in res) {
             const wallet: Wallet = {
-                ID: res.ID ?? undefined,
-                VendorID: res.VendorID ?? undefined,
-                balance: res.Balance, // Map "Balance" to "balance"
-                UpdatedAt: res.UpdatedAt ?? undefined,
-            };
+                ID: res.ID,
+                VendorID: res.VendorID,
+                balance: res.Balance,
+                BillingAddress: res.BillingAddress,
+                BillingCity: res.BillingCity,
+                BillingState: res.BillingState,
+                BillingZip: res.BillingZip,
+                BillingCountry: res.BillingCountry,
+                UpdatedAt: res.UpdatedAt,
+            }
             console.log('[getVendorWallet] Parsed Wallet:', wallet); // Debug log
             return wallet;
         } else {

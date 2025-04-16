@@ -122,15 +122,14 @@ export default function FormBuilder({
         throw new Error('Failed to save form config');
       }
 
-      const savedForm = await res.json(); // Get the saved form with the generated ID
-      alert('Form saved!');
+      const savedForm = await res.json();
 
-      const iframe = `<iframe src="http://localhost:8080/embed/form?affiliate=${affiliateId}&button_color=${encodeURIComponent(
+      const iframe = `<iframe src="http://localhost:8080/embed/form?form_id=${savedForm.id}&affiliate=${affiliateId}&button_color=${encodeURIComponent(
         buttonColor
-      )}&form_title=${encodeURIComponent(
-        formTitle
-      )}" style="width:100%;height:600px;" frameborder="0"></iframe>`;
+      )}&form_title=${encodeURIComponent(formTitle)}&utm_source=default&utm_medium=embed&utm_campaign=leadgen" style="width:100%;height:600px;" frameborder="0"></iframe>`;
+
       onSave?.(iframe);
+
     } catch (err) {
       console.error('Save error:', err);
       alert('Save failed.');

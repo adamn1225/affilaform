@@ -17,6 +17,8 @@ export default function UserSettings() {
         company_name: string;
         industry: string;
         Password?: string; // Optional password field
+        ga4_enabled?: boolean;
+        ga4_id?: string;
     }
 
     const [user, setUser] = useState<UserProfile>({
@@ -29,9 +31,11 @@ export default function UserSettings() {
         company_name: '',
         industry: '',
         Password: '',
+        ga4_id: '',
+        ga4_enabled: false,
     });
 
-    const [activeTab, setActiveTab] = useState<'profile' | 'password' | 'notifications'>('profile');
+    const [activeTab, setActiveTab] = useState<'profile' | 'password' | 'notifications' | 'integrations'>('profile');
     const [showPasswordFields, setShowPasswordFields] = useState(false);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -59,21 +63,21 @@ export default function UserSettings() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-    
+
         if (activeTab === 'password' && showPasswordFields && password !== confirmPassword) {
             toast.error('Passwords do not match');
             return;
         }
-    
+
         try {
             const payload = { ...user };
             if (activeTab === 'password' && showPasswordFields) {
                 payload.Password = password; // Add the password field if updating the password
             }
-    
+
             const response = await updateVendorProfile(payload as any); // Use the updated function
             console.log('[UserSettings] Update Response:', response);
-    
+
             toast.success('Profile updated successfully');
         } catch (err) {
             console.error('[UserSettings] Failed to update profile:', err);
@@ -97,10 +101,18 @@ export default function UserSettings() {
                     </li>
                     <li>
                         <button
+                            onClick={() => setActiveTab('integrations')}
+                            className={`w-full text-left px-2 py-1 rounded-md ${activeTab === 'integrations' ? 'bg-blue-100 text-blue-700 font-medium' : 'hover:bg-gray-100'}`}
+                        >
+                            Integrations
+                        </button>
+                    </li>
+                    <li>
+                        <button
                             onClick={() => setActiveTab('password')}
                             className={`w-full text-left px-2 py-1 rounded-md ${activeTab === 'password' ? 'bg-blue-100 text-blue-700 font-medium' : 'hover:bg-gray-100'}`}
                         >
-                            Password
+                            Security/Privacy
                         </button>
                     </li>
                     <li>
@@ -154,6 +166,41 @@ export default function UserSettings() {
                             )}
                         </motion.div>
                     </AnimatePresence>
+                    {/* Integrations */}
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            {activeTab === 'integrations' && (
+                                <section>
+                                    <label className="flex items-center gap-2 mt-4">
+                                        <input
+                                            type="checkbox"
+                                            checked={user.ga4_enabled}
+                                            onChange={(e) =>
+                                                setUser((prev) => ({ ...prev, ga4_enabled: e.target.checked }))
+                                            }
+                                        />
+                                        Enable Google Analytics (GA4) Tracking
+                                    </label>
+
+                                    <input
+                                        className="border p-2 mt-2 w-full"
+                                        placeholder="G-XXXXXXXXXX"
+                                        value={user.ga4_id || ''}
+                                        onChange={(e) =>
+                                            setUser((prev) => ({ ...prev, ga4_id: e.target.value }))
+                                        }
+                                    />
+                                </section>
+                            )}
+                        </motion.div>
+                    </AnimatePresence>
+
                     {/* Password Change */}
                     <AnimatePresence mode="wait">
                         <motion.div

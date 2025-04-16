@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import FormBuilderPage from './FormBuilderPage';
+import FormPage from './formbuilder/FormPage';
 import VendorForms from './VendorForms';
 import VendorSubmissions from './VendorSubmissions';
 import VendorSettings from './VendorSettings';
@@ -10,8 +10,12 @@ import { apiFetch } from '@/lib/api/apiFetch';
 
 export default function VendorDashboard() {
   const searchParams = useSearchParams();
-  const initialTab = searchParams.get('tab') || 'forms';
-  const [tab, setTab] = useState<'forms' | 'submissions' | 'builder' | 'vendorsettings'>(initialTab as 'forms' | 'submissions' | 'builder');
+  const validTabs = ['forms', 'submissions', 'builder', 'vendorsettings'] as const;
+  type TabKey = typeof validTabs[number];
+
+  const initialTab = searchParams.get('tab');
+  const [tab, setTab] = useState<TabKey>(validTabs.includes(initialTab as TabKey) ? (initialTab as TabKey) : 'forms');
+
   const [vendor, setVendor] = useState<{ email: string; company_name: string; role: string } | null>(null);
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [formDraft, setFormDraft] = useState<any | null>(null);
@@ -120,7 +124,7 @@ export default function VendorDashboard() {
       <div className="w-full max-w-8xl p-4 bg-gray-50">
         {tab === 'forms' && <VendorForms />}
         {tab === 'submissions' && <VendorSubmissions />}
-        {tab === 'builder' && <FormBuilderPage />}
+        {tab === 'builder' && <FormPage />}
         {tab === 'vendorsettings' && <VendorSettings />}
       </div>
     </div>
