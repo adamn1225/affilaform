@@ -14,6 +14,21 @@ export default function AffiliateRotatorsPage() {
             try {
                 const rotators = await getMyRotators();
                 setRotators(rotators || []);
+                console.log('Rotators from API:', rotators);
+                if (rotators.length === 0) {
+                    console.warn('No rotators returned. Injecting mock for debug.');
+                    setRotators([
+                        {
+                            ID: 99,
+                            AffiliateID: 1,
+                            Name: 'Mock Rotator',
+                            Slug: 'mock123',
+                            Strategy: 'random',
+                            CreatedAt: new Date().toISOString(),
+                        }
+                    ]);
+                }
+
             } catch (err) {
                 console.error('Failed to fetch rotators:', err);
             } finally {

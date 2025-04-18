@@ -12,11 +12,12 @@ export type OfferRotator = {
 export async function getMyRotators(): Promise<OfferRotator[]> {
     try {
         const res = await apiFetch('/api/affiliate/rotators');
+        console.log('[getMyRotators] Response:', res); // Debug log
         if (!Array.isArray(res)) {
             console.error('[getMyRotators] Expected an array, got:', res);
             return [];
         }
-        return res; // ← direct return of array
+        return res;
     } catch (error) {
         console.error('[getMyRotators] Failed to fetch:', error);
         return [];
@@ -29,6 +30,7 @@ export async function createRotator(name: string): Promise<OfferRotator | null> 
         const res = await apiFetch('/api/affiliate/rotators', {
             method: 'POST',
             body: JSON.stringify({ name }),
+            credentials: 'include',
         })
 
         if (!res || typeof res !== 'object') {
@@ -44,13 +46,15 @@ export async function createRotator(name: string): Promise<OfferRotator | null> 
 }
 
 export type RotatorLink = {
-    ID: number;
-    RotatorID: number;
-    URL: string;
-    Weight: number;
-    Clicks: number;
-    CreatedAt: string;
-};
+    ID: number
+    RotatorID: number
+    URL: string
+    Weight: number
+    Clicks: number
+    CreatedAt: string
+    Conditions?: any
+    Strategy?: string
+}
 
 export type RotatorDetailResponse = {
     rotator: OfferRotator;
@@ -60,29 +64,13 @@ export type RotatorDetailResponse = {
 export async function GetRotatorByID(rotatorId: number): Promise<RotatorDetailResponse | null> {
     try {
         const res = await apiFetch(`/api/affiliate/rotators/${rotatorId}`);
-
         if (!res || typeof res !== 'object' || !res.rotator) {
             console.error('[GetRotatorByID] Invalid response:', res);
             return null;
         }
-
         return {
-            rotator: {
-                ID: res.rotator.ID as number,
-                Name: res.rotator.Name as string,
-                Slug: res.rotator.Slug as string,
-                Strategy: res.rotator.Strategy as string,
-                AffiliateID: res.rotator.AffiliateID as number,
-                CreatedAt: res.rotator.CreatedAt as string,
-            },
-            links: (res.links || []).map((link: any): RotatorLink => ({
-                ID: link.ID as number,
-                URL: link.URL as string,
-                Weight: link.Weight as number,
-                Clicks: link.Clicks as number,
-                CreatedAt: link.CreatedAt as string,
-                RotatorID: link.RotatorID as number,
-            })),
+            rotator: res.rotator,
+            links: res.links || [],
         };
     } catch (error) {
         console.error('[GetRotatorByID] Failed to fetch rotator:', error);
@@ -99,7 +87,6 @@ export async function addRotatorLink(rotatorId: number, url: string, weight: num
             credentials: 'include',
         });
 
-        // Directly return the response if it matches the expected structure
         if (
             res &&
             typeof res === 'object' &&
@@ -162,6 +149,7 @@ export async function deleteRotatorLink(rotatorId: number, linkId: number): Prom
     try {
         await apiFetch(`/api/affiliate/rotators/${rotatorId}/links/${linkId}`, {
             method: 'DELETE',
+            credentials: 'include',
         });
         return true; // Indicates success
     } catch (error) {
@@ -175,6 +163,7 @@ export async function updateRotatorLinkWeight(rotatorId: number, linkId: number,
         const res = await apiFetch(`/api/affiliate/rotators/${rotatorId}/links/${linkId}`, {
             method: 'PATCH',
             body: JSON.stringify({ weight }),
+            credentials: 'include',
         });
         return res; // Return the updated link data
     } catch (error) {

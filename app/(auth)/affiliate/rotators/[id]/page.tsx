@@ -64,9 +64,15 @@ export default function RotatorDetailPage() {
     try {
       const res = await addRotatorLink(Number(id), newUrl, 1);
       if (!res) throw new Error('Failed to add link');
-      setLinks([...links, res]);
       setNewUrl('');
       toast.success('Link added successfully');
+
+      // 🔁 Re-fetch full rotator (including links)
+      const updated = await GetRotatorByID(Number(id));
+      setRotator(updated?.rotator || null);
+      if (updated) {
+        setLinks(updated.links);
+      }
     } catch (err) {
       console.error('[addLink] Error:', err);
       toast.error('Failed to add link');
@@ -77,7 +83,8 @@ export default function RotatorDetailPage() {
     try {
       const res = await apiFetch(`/api/affiliate/rotators/${id}`, {
         method: 'PATCH',
-        body: JSON.stringify({ Name: updatedName })
+        body: JSON.stringify({ Name: updatedName }),
+        credentials: 'include',
       });
       setRotator(rotator ? { ...rotator, Name: res.Name } : null);
       setEditingName(false);
@@ -103,7 +110,7 @@ export default function RotatorDetailPage() {
 
   return (
     <div className="flex gap-6 max-w-8xl mx-auto py-8">
-      <div className='bg-white border rounded-lg shadow p-6'>
+      <div className='bg-white border w-3/4 rounded-lg shadow p-6'>
         <h1 className="text-2xl font-bold mb-4">Rotator Details</h1>
         <div className="flex justify-between items-center mb-4">
           {editingName ? (

@@ -21,10 +21,13 @@ export default function CreateRotatorPage() {
             const res = await apiFetch('/api/affiliate/rotators', {
                 method: 'POST',
                 body: JSON.stringify({ name, strategy }),
+                credentials: 'include',
             });
+            console.log('Rotator created:', res); // Debug log
             toast.success('Rotator created!');
-            router.push(`/affiliate/rotators/${res.rotator.id}`);
+            window.location.href = `/affiliate/rotators/${res.rotator.id}`;
         } catch (err) {
+            console.error('Failed to create rotator:', err); // Debug log
             toast.error('Failed to create rotator');
         } finally {
             setLoading(false);
