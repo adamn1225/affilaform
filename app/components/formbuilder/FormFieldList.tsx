@@ -1,7 +1,7 @@
 'use client'
 
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
-import { FormField } from './types'
+import type { FormField, FormConfig, FormOption, FormWidth } from './types'
 import FieldEditor from './FieldEditor'
 
 type Props = {

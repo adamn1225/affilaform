@@ -4,14 +4,7 @@ import { useState, useEffect } from 'react'
 import FormBuilder from '@/components/formbuilder/FormBuilder'
 import EmbedPreview from '@/components/formbuilder/EmbedPreview'
 import { AnimatePresence, motion } from 'framer-motion'
-
-type FormField = {
-    label: string
-    name: string
-    placeholder: string
-    type: string
-    required: boolean
-}
+import type { FormField, FormWidth } from './types'
 
 export default function FormPage() {
     const [affiliateId, setAffiliateId] = useState<number | null>(null)
@@ -19,6 +12,10 @@ export default function FormPage() {
     const [buttonColor, setButtonColor] = useState('#000000')
     const [buttonText, setButtonText] = useState('Submit Request')
     const [iframeCode, setIframeCode] = useState<string | null>(null)
+
+    const [showAsModal, setShowAsModal] = useState(false)
+    const [formWidth, setFormWidth] = useState<FormWidth>('md')
+
     const [fields, setFields] = useState<FormField[]>([
         {
             label: '',
@@ -26,6 +23,7 @@ export default function FormPage() {
             placeholder: '',
             type: 'text',
             required: false,
+            step: 1,
         },
     ])
 
@@ -34,20 +32,20 @@ export default function FormPage() {
 
     useEffect(() => {
         const draft = localStorage.getItem('formConfigDraft')
-        if (draft) {
-            try {
-                const parsed = JSON.parse(draft)
-                setFields(parsed.fields || [])
-                setFormTitle(parsed.form_title || 'Your Custom Title')
-                setButtonColor(parsed.button_color || '#000000')
-                setButtonText(parsed.button_text || 'Submit Request')
-                setAffiliateGA4ID(parsed.affiliate_ga4_id || '')
-                setVendorGA4ID(parsed.vendor_ga4_id || '')
-            } catch (err) {
-                console.error('Invalid draft config')
-            } finally {
-                localStorage.removeItem('formConfigDraft')
-            }
+        if (!draft) return
+
+        try {
+            const parsed = JSON.parse(draft)
+            setFields(parsed.fields || [])
+            setFormTitle(parsed.form_title || 'Your Custom Title')
+            setButtonColor(parsed.button_color || '#000000')
+            setButtonText(parsed.button_text || 'Submit Request')
+            setAffiliateGA4ID(parsed.affiliate_ga4_id || '')
+            setVendorGA4ID(parsed.vendor_ga4_id || '')
+        } catch (err) {
+            console.error('Invalid draft config', err)
+        } finally {
+            localStorage.removeItem('formConfigDraft')
         }
     }, [])
 
@@ -58,11 +56,14 @@ export default function FormPage() {
         button_color: buttonColor,
         affiliate_ga4_id: affiliateGA4ID,
         vendor_ga4_id: vendorGA4ID,
+        showAsModal,
+        width: formWidth,
     }
 
     return (
-        <div className="w-full py-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded">
+        <div className="w-full md:-mt-4 lg:-mt-7 p-6 bg-slate-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6 justify-items-center w-full rounded">
+
                 <FormBuilder
                     fields={fields}
                     setFields={setFields}
@@ -77,12 +78,14 @@ export default function FormPage() {
                     affiliateGA4ID={affiliateGA4ID}
                     setAffiliateGA4ID={setAffiliateGA4ID}
                     onSave={(iframe) => setIframeCode(iframe)}
+                    showAsModal={showAsModal}
+                    setShowAsModal={setShowAsModal}
+                    formWidth={formWidth}
+                    setFormWidth={setFormWidth}
                 />
-
                 <EmbedPreview liveConfig={liveConfig} />
             </div>
 
-            {/* Embed Code Modal */}
             <AnimatePresence>
                 {iframeCode && (
                     <motion.div

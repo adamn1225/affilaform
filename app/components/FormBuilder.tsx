@@ -26,17 +26,24 @@ export type FormConfig = {
 }
 
 interface FormBuilderProps {
-  fields: FormField[]
-  setFields: React.Dispatch<React.SetStateAction<FormField[]>>
-  formTitle: string
-  setFormTitle: (val: string) => void
-  buttonColor: string
-  setButtonColor: (val: string) => void
-  buttonText: string
-  setButtonText: (val: string) => void
-  affiliateId: number
-  setAffiliateId: (val: number) => void
-  onSave?: (iframeCode: string) => void
+  fields: FormField[];
+  setFields: React.Dispatch<React.SetStateAction<FormField[]>>;
+  formTitle: string;
+  setFormTitle: (val: string) => void;
+  buttonColor: string;
+  setButtonColor: (val: string) => void;
+  buttonText: string;
+  setButtonText: (val: string) => void;
+  affiliateId: number;
+  setAffiliateId: (val: number) => void;
+  onSave?: (iframeCode: string) => void;
+  affiliateGA4ID: string;
+  setAffiliateGA4ID: (val: string) => void;
+  options?: FormOption[]; // Already added
+  step?: number; // Add this line
+  stepTitle?: string; // Add this line if needed
+  variant?: 'A' | 'B'; // Add this line if needed
+  inline?: boolean; // Add this line if needed
 }
 
 export default function FormBuilder({
