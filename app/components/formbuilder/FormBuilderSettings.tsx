@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import type { FormField, FormConfig, FormOption, FormWidth } from './types'
 import { LayoutTemplate } from 'lucide-react'
+import { formApiOptions } from '@/lib/constants/formApiOptions'
 
 type Props = {
     formTitle: string
@@ -136,13 +137,13 @@ export default function FormBuilderSettings({
 
                     <div className="pt-4 border-t">
                         <label className="block text-sm font-semibold mb-1">Form APIs (Coming soon)</label>
-                        <select
-                            value={affiliateGA4ID}
-                            className="w-full p-2 border rounded"
-                        >
+                        <select className="w-full p-2 border rounded">
                             <option value="">Select</option>
-                            <option value="googlePlaces">Google Places API</option>
-                            <option value="Custom API">Zapier</option>
+                            {formApiOptions.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
